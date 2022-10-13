@@ -7,6 +7,7 @@
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="board.Board"%>
 <%@ page import="board.BoardDAO"%>
@@ -56,11 +57,11 @@
             </tr>
             <tr>
                 <td style="width: 20%;">등록일시</td>
-                <td colspan="2"><%=board.getCreatedAt()%></td>
+                <td colspan="2"><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="<%=board.getCreatedAt()%>"/></td>
             </tr>
             <tr>
                 <td style="width: 20%;">수정일시</td>
-                <td colspan="2"><%=board.getUpdatedAt()%></td>
+                <td colspan="2"><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="<%=board.getUpdatedAt()%>"/></td>
             </tr>
             <tr>
                 <td style="width: 20%;">내용</td>
