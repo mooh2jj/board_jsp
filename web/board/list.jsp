@@ -41,22 +41,16 @@ isELIgnored="false"
                     <th style="background-color: #eeeeee; text-align: center">등록 일시</th>
                     <th style="background-color: #eeeeee; text-align: center">수정 일시</th>
                 </tr>
-                <%
-
-                    for(int i=0; i < list.size(); i++){
-                %>
+            <c:forEach var="board" items="<%=list%>">
                 <tr>
-                    <td><%= list.get(i).getCategory() %></td>
-                    <td><a href="view.jsp?id=<%= list.get(i).getId() %>"><%= list.get(i).getTitle()%></a></td>
-                    <td><%= list.get(i).getWriter()%></td>
-                    <td><%= list.get(i).getHit()%></td>
-                    <td><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="<%=list.get(i).getCreatedAt()%>"/></td>
-                    <td><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="<%=list.get(i).getUpdatedAt()%>"/></td>
+                    <td>${board.category}</td>
+                    <td><a href="view.jsp?id=${board.id}">${board.title}</a></td>
+                    <td>${board.writer}</td>
+                    <td>${board.hit}</td>
+                    <td><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="${board.createdAt}"/></td>
+                    <td><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="${board.updatedAt}"/></td>
                 </tr>
-                <%
-                    }
-                %>
-
+            </c:forEach>
             </table>
             <a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
         </div>
