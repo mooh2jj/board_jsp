@@ -48,7 +48,14 @@ isELIgnored="false"
                     <td>${board.writer}</td>
                     <td>${board.hit}</td>
                     <td><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="${board.createdAt}"/></td>
-                    <td><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="${board.updatedAt}"/></td>
+                    <c:choose>
+                        <c:when test="${board.updatedAt ne null}">
+                            <td><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="${board.updatedAt}"/></td>
+                        </c:when>
+                        <c:otherwise>
+                            <td style="text-align: center">-</td>
+                        </c:otherwise>
+                    </c:choose>
                 </tr>
             </c:forEach>
             </table>
