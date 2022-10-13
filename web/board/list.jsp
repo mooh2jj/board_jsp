@@ -20,7 +20,15 @@ isELIgnored="false"
 <body>
 
     게시판 - 목록
+    <%
+        BoardDAO boardDAO = new BoardDAO();
+        List<Board> list = boardDAO.getList();
+    %>
 
+    <br>
+    <br>
+
+    총 <%=list.size()%>건
     <div class="container">
         <div class="row">
             <table class="table table-striped"
@@ -34,8 +42,7 @@ isELIgnored="false"
                     <th style="background-color: #eeeeee; text-align: center">수정 일시</th>
                 </tr>
                 <%
-                    BoardDAO boardDAO = new BoardDAO();
-                    List<Board> list = boardDAO.getList();
+
                     for(int i=0; i < list.size(); i++){
                 %>
                 <tr>

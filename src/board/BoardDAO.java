@@ -32,6 +32,8 @@ public class BoardDAO {
             if (rs.next()) {
                 return rs.getTimestamp(1);
             }
+            rs.close();
+            pstmt.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -46,6 +48,8 @@ public class BoardDAO {
             if (rs.next()) {
                 return rs.getInt(1) + 1;
             }
+            rs.close();
+            pstmt.close();
             return 1;
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,7 +69,7 @@ public class BoardDAO {
             pstmt.setString(4, board.getContent());
             pstmt.setString(5, board.getWriter());
             pstmt.setInt(6, 0);
-            pstmt.setTimestamp(7, getTimeStamp());    // TODO: date타입 insert 작업 추가
+            pstmt.setTimestamp(7, getTimeStamp());
             pstmt.setTimestamp(8, null);
             int resultCnt = pstmt.executeUpdate();
             pstmt.close();
@@ -139,7 +143,7 @@ public class BoardDAO {
             pstmt.setString(1, board.getTitle());
             pstmt.setString(2, board.getContent());
             pstmt.setString(3, board.getWriter());
-            pstmt.setTimestamp(4, getTimeStamp()); // TODO: updatedAt now 처리
+            pstmt.setTimestamp(4, getTimeStamp());
             pstmt.setLong(5, board.getId());
             int resultCnt = pstmt.executeUpdate();
             pstmt.close();
