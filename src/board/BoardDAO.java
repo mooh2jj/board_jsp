@@ -1,7 +1,6 @@
 package board;
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,9 +8,6 @@ public class BoardDAO {
     private Connection conn;
     private ResultSet rs;
 
-//    Timestamp timestamp = new Timestamp(System.currentTimeMillis()); // 현재 날짜 출력
-
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     public BoardDAO() {
         try {
             String dbURL = "jdbc:mysql://localhost:3306/board_dsg?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
@@ -22,6 +18,22 @@ public class BoardDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public int updateHit(Board board) {
+        String query = "UPDATE board SET hit=hit+1 where id=?";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setLong(1, board.getId());
+
+            int resultCnt = pstmt.executeUpdate();
+            pstmt.close();
+
+            return resultCnt;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1; // 데이터 베이스 오류
     }
 
     public Timestamp getTimeStamp() {

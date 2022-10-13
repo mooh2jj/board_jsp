@@ -29,20 +29,18 @@
         script.println("location.href='board.jsp'");
         script.println("</script>");
     }
-    Board board = new BoardDAO().getBoard(id);
+    BoardDAO boardDAO = new BoardDAO();
+    Board board = boardDAO.getBoard(id);
+
+    boardDAO.updateHit(board);
 %>
+<%--바로 조회수 1 추가해진 상태로 볼 수 있게 해줌--%>
+조회수: <%=board.getHit()+1%>
 
 <div class="container">
     <div class="row">
-
         <table class="table table-striped"
                style="text-align: center; border: 1px solid #dddddd;">
-            <tr>
-                <th colspan="3"
-                    style="background-color: #eeeeee; text-align: center">게시판 글보기
-
-                </td>
-            </tr>
             <tr>
                 <td style="width: 20%;">작성자</td>
                 <td colspan="2"><%=board.getWriter()%></td>
