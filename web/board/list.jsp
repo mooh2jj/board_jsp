@@ -43,8 +43,8 @@ isELIgnored="false"
                     <td><a href="view.jsp?id=<%= list.get(i).getId() %>"><%= list.get(i).getTitle()%></a></td>
                     <td><%= list.get(i).getWriter()%></td>
                     <td><%= list.get(i).getHit()%></td>
-                    <td><%= list.get(i).getCreatedAt()%></td>
-                    <td><%= list.get(i).getUpdatedAt()%></td>
+                    <td><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="<%=list.get(i).getCreatedAt()%>"/></td>
+                    <td><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="<%=list.get(i).getUpdatedAt()%>"/></td>
                 </tr>
                 <%
                     }
