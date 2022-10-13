@@ -94,10 +94,24 @@ public class BoardDAO {
         return -1; // 데이터 베이스 오류
     }
 
-    public List<Board> getList(){
-        String query = "SELECT * FROM Board ORDER BY id DESC LIMIT 10";
+    public List<Board> getList(String searchOption, String keyword){
+        String query = "SELECT * FROM Board ";
+
         List<Board> list = new ArrayList<>();
         try {
+            if(keyword != null && !keyword.equals("")) {
+                // 전체 검색인 경우
+                if ("all".equals(searchOption)) {
+                    query += "WHERE 1=1 AND (" + "title LIKE '%" + keyword.trim() + "%'";
+                    query += "OR content LIKE '%" + keyword.trim() + "%'";
+                    query += "OR writer LIKE '%" + keyword.trim() + "%')";
+                // 전체 검색이 아닌 경우
+                } else {
+                    query += "WHERE " + searchOption.trim() + " LIKE '%" + keyword.trim() + "%' ORDER BY id";
+                }
+            } else query += "ORDER BY id";
+
+            System.out.println("getList query: "+query);
             PreparedStatement pstmt = conn.prepareStatement(query);
 //            pstmt.setInt(1, getNext() - (pageNumber - 1) * 10);
             rs = pstmt.executeQuery();

@@ -21,11 +21,26 @@ isELIgnored="false"
 
     게시판 - 목록
     <%
+        request.setCharacterEncoding("UTF-8");
+        String searchOption = request.getParameter("searchOption");
+        String keyword = request.getParameter("keyword");
         BoardDAO boardDAO = new BoardDAO();
-        List<Board> list = boardDAO.getList();
+        List<Board> list = boardDAO.getList(searchOption, keyword);
     %>
 
     <br>
+
+    <form align="left" name="form11" method="post" action="list.jsp">
+        <select name="searchOption">
+            <option value="all" selected>제목+작성자+내용</option>
+            <option value="title">제목</option>
+            <option value="writer">작성자</option>
+            <option value="content">내용</option>
+        </select>
+        <input type="text" name="keyword">
+        <input type="submit" value="검색"/>
+    </form>
+
     <br>
 
     총 <%=list.size()%>건
