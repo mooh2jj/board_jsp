@@ -19,7 +19,6 @@ isELIgnored="false"
 </head>
 <body>
 
-    게시판 - 목록
     <%
         request.setCharacterEncoding("UTF-8");
         String searchOption = request.getParameter("searchOption");
@@ -28,6 +27,7 @@ isELIgnored="false"
         List<Board> list = boardDAO.getList(searchOption, keyword);
     %>
 
+<h2>게시판 - 목록</h2>
     <br>
 
     <form align="left" name="form11" method="post" action="list.jsp">
@@ -42,8 +42,8 @@ isELIgnored="false"
     </form>
 
     <br>
-
     총 <%=list.size()%>건
+    <br>
     <div class="container">
         <div class="row">
             <table class="table table-striped"

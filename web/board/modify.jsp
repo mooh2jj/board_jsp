@@ -17,7 +17,11 @@
 </head>
 <body>
 
-기본정보
+<h2>게시판 - 수정</h2>
+
+<br>
+
+<h3>기본정보</h3>
 <%
 
     long id = 0L;
@@ -88,6 +92,7 @@
                     </td>
                 </tr>
             </table>
+            <input type="button" class="btn btn-primary" onclick="history.back();" value="취소">
             <input type="submit" class="btn btn-primary pull-left" value="저장">
         </form>
 

@@ -34,6 +34,11 @@
 
     boardDAO.updateHit(board);
 %>
+
+<h2>게시판 - 보기</h2>
+
+<br>
+<br>
 <%--바로 조회수 1 추가해진 상태로 볼 수 있게 해줌--%>
 조회수: <%=board.getHit()+1%>
 

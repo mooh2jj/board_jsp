@@ -10,14 +10,16 @@
     <title>게시판 등록</title>
 </head>
 <body>
+
+<h2>게시판 - 등록</h2>
+
+<br>
+<br>
 <div class="container">
     <div class="row">
         <form action="writeAction.jsp" method="post">
             <table class="table table-striped"
                    style="text-align: center; border: 1px solid #dddddd;">
-                <tr>
-                    <td colspan="2"	style="background-color: #eeeeee; text-align: center">게시판 - 등록</td>
-                </tr>
                 <tr>
                     <td><input type="text" class="form-control" placeholder="카테고리" name="category" maxlength="50"></td>
                 </tr>
