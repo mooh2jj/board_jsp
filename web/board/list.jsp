@@ -1,9 +1,12 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"
+isELIgnored="false"
+%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ page import="board.BoardDAO"%>
 <%@ page import="board.Board"%>
 <%@ page import="java.io.PrintWriter"%>
-<%@ page import="java.util.ArrayList"%>
+<%@ page import="java.util.List" %>
 
 <!doctype html>
 <html lang="en">
@@ -15,6 +18,9 @@
     <title>게시판 목록</title>
 </head>
 <body>
+
+    게시판 - 목록
+
     <div class="container">
         <div class="row">
             <table class="table table-striped"
@@ -29,12 +35,12 @@
                 </tr>
                 <%
                     BoardDAO boardDAO = new BoardDAO();
-                    ArrayList<Board> list = boardDAO.getList();
+                    List<Board> list = boardDAO.getList();
                     for(int i=0; i < list.size(); i++){
                 %>
                 <tr>
                     <td><%= list.get(i).getCategory() %></td>
-                    <td><%= list.get(i).getTitle()%></td>
+                    <td><a href="view.jsp?id=<%= list.get(i).getId() %>"><%= list.get(i).getTitle()%></a></td>
                     <td><%= list.get(i).getWriter()%></td>
                     <td><%= list.get(i).getHit()%></td>
                     <td><%= list.get(i).getCreatedAt()%></td>

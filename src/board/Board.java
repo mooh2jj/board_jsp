@@ -1,6 +1,6 @@
 package board;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Board {
     private Long id;

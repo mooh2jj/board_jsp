@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: dsg
-  Date: 2022-10-12
-  Time: PM 11:21
+  Date: 2022-10-13
+  Time: PM 4:13
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -12,10 +12,7 @@
 <% request.setCharacterEncoding("UTF-8"); %>
 
 <jsp:useBean id="board" class="board.Board" scope="page" />
-<jsp:setProperty name="board" property="category" />
-<jsp:setProperty name="board" property="title" />
-<jsp:setProperty name="board" property="content" />
-<jsp:setProperty name="board" property="writer" />
+<jsp:setProperty name="board" property="id" />
 
 <!doctype html>
 <html lang="en">
@@ -28,15 +25,25 @@
 </head>
 <body>
 <%
-    BoardDAO boardDAO = new BoardDAO();
-    int result = boardDAO.write(board);
+    long id = 0L;
+    if (request.getParameter("id") != null) {
+        id = Long.parseLong(request.getParameter("id"));
+        System.out.println("id: "+ id);
+    }
+    if (id == 0) {
+        PrintWriter script = response.getWriter();
+        script.println("<script>");
+        script.println("alert('유효하지 않은 글입니다.')");
+        script.println("location.href='bbs.jsp'");
+        script.println("</script>");
+    }
 
-    System.out.println("board:" + board);
-
+    BoardDAO bbsDAO = new BoardDAO();
+    int result = bbsDAO.delete(id);
     if (result == -1) {
         PrintWriter script = response.getWriter();
         script.println("<script>");
-        script.println("alert('글 쓰기에 실패했습니다.')");
+        script.println("alert('글 삭제에 실패했습니다.')");
         script.println("history.back()");
         script.println("</script>");
     } else {
@@ -45,6 +52,8 @@
         script.print("location.href = 'list.jsp'");
         script.println("</script>");
     }
+
 %>
+
 </body>
 </html>
