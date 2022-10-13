@@ -31,6 +31,7 @@
                     <td><textarea class="form-control" placeholder="글 내용" name="content" maxlength="2048" style="height: 350px;"></textarea></td>
                 </tr>
             </table>
+            <input type="button" class="btn btn-primary" onclick="history.back();" value="취소">
             <input type="submit" class="btn btn-primary pull-right" value="저장">
         </form>
     </div>
