@@ -67,8 +67,12 @@ public class BoardDAO {
             pstmt.setInt(6, 0);
             pstmt.setTimestamp(7, getTimeStamp());    // TODO: date타입 insert 작업 추가
             pstmt.setTimestamp(8, null);
-            return pstmt.executeUpdate();
-        } catch (Exception e) {
+            int resultCnt = pstmt.executeUpdate();
+            pstmt.close();
+
+            return resultCnt;
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
         return -1; // 데이터 베이스 오류
@@ -94,6 +98,8 @@ public class BoardDAO {
                 list.add(board);
                 System.out.println("getList board: "+board);
             }
+            rs.close();
+            pstmt.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -118,6 +124,8 @@ public class BoardDAO {
                 board.setUpdatedAt(rs.getTimestamp(8));
                 return board;
             }
+            rs.close();
+            pstmt.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,7 +141,10 @@ public class BoardDAO {
             pstmt.setString(3, board.getWriter());
             pstmt.setTimestamp(4, getTimeStamp()); // TODO: updatedAt now 처리
             pstmt.setLong(5, board.getId());
-            return pstmt.executeUpdate();
+            int resultCnt = pstmt.executeUpdate();
+            pstmt.close();
+
+            return resultCnt;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,7 +156,10 @@ public class BoardDAO {
         try {
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setLong(1, id);
-            return pstmt.executeUpdate();
+            int resultCnt = pstmt.executeUpdate();
+            pstmt.close();
+
+            return resultCnt;
         } catch (Exception e) {
             e.printStackTrace();
         }
