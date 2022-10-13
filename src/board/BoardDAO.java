@@ -2,8 +2,6 @@ package board;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,13 +24,13 @@ public class BoardDAO {
         }
     }
 
-    public Date getDate() {
+    public Timestamp getTimeStamp() {
         String query = "SELECT NOW()";
         try {
             PreparedStatement pstmt = conn.prepareStatement(query);
             rs = pstmt.executeQuery();
             if (rs.next()) {
-                return rs.getDate(1);
+                return rs.getTimestamp(1);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,8 +65,8 @@ public class BoardDAO {
             pstmt.setString(4, board.getContent());
             pstmt.setString(5, board.getWriter());
             pstmt.setInt(6, 0);
-            pstmt.setDate(7, getDate());    // TODO: date타입 insert 작업 추가
-            pstmt.setDate(8, null);
+            pstmt.setTimestamp(7, getTimeStamp());    // TODO: date타입 insert 작업 추가
+            pstmt.setTimestamp(8, null);
             return pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,8 +89,8 @@ public class BoardDAO {
                 board.setContent(rs.getString(4));
                 board.setWriter(rs.getString(5));
                 board.setHit(rs.getInt(6));
-                board.setCreatedAt(rs.getDate(7));
-                board.setCreatedAt(rs.getDate(8));
+                board.setCreatedAt(rs.getTimestamp(7));
+                board.setUpdatedAt(rs.getTimestamp(8));
                 list.add(board);
                 System.out.println("getList board: "+board);
             }
@@ -116,8 +114,8 @@ public class BoardDAO {
                 board.setContent(rs.getString(4));
                 board.setWriter(rs.getString(5));
                 board.setHit(rs.getInt(6));
-                board.setCreatedAt(rs.getDate(7));
-                board.setUpdatedAt(rs.getDate(8));
+                board.setCreatedAt(rs.getTimestamp(7));
+                board.setUpdatedAt(rs.getTimestamp(8));
                 return board;
             }
         } catch (Exception e) {
@@ -133,7 +131,7 @@ public class BoardDAO {
             pstmt.setString(1, board.getTitle());
             pstmt.setString(2, board.getContent());
             pstmt.setString(3, board.getWriter());
-            pstmt.setDate(4, getDate()); // TODO: updatedAt now 처리
+            pstmt.setTimestamp(4, getTimeStamp()); // TODO: updatedAt now 처리
             pstmt.setLong(5, board.getId());
             return pstmt.executeUpdate();
         } catch (Exception e) {
