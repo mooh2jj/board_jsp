@@ -37,7 +37,7 @@ isELIgnored="false"
             <option value="writer">작성자</option>
             <option value="content">내용</option>
         </select>
-        <input type="text" name="keyword">
+        <input type="text" name="keyword" style="width: 290px;" placeholder="검색어를 입력해주세요. (제목+작성자+내용)">
         <input type="submit" value="검색"/>
     </form>
 
@@ -59,7 +59,7 @@ isELIgnored="false"
             <c:forEach var="board" items="<%=list%>">
                 <tr>
                     <td>${board.category}</td>
-                    <td><a href="view.jsp?id=${board.id}">${board.title}</a></td>
+                    <td style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width: 500px"><a href="view.jsp?id=${board.id}">${board.title}</a></td>
                     <td>${board.writer}</td>
                     <td>${board.hit}</td>
                     <td><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="${board.createdAt}"/></td>
