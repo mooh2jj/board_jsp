@@ -10,6 +10,21 @@
     <title>게시판 등록</title>
 </head>
 <body>
+<%
+    // 페이지 처리 pageNum, amount
+    int pageNum = 0;
+    int amount = 10;    // 한 페이지에 보여줄 글의 갯수
+
+    String pageNumStr = request.getParameter("pageNum");
+    System.out.println("pageNumStr: "+ pageNumStr);
+
+    if (pageNumStr == null) {
+        pageNum = 1;
+    } else{
+        pageNum = Integer.parseInt(pageNumStr);
+        System.out.println("======pageNum: "+ pageNum);
+    }
+%>
 
 <h2>게시판 - 등록</h2>
 
@@ -47,7 +62,7 @@
                     </td>
                 </tr>
             </table>
-            <input type="button" class="btn btn-primary" onclick="history.back();" value="취소">
+            <input type="button" class="btn btn-primary" onclick="location.href='list.jsp?pageNum=<%=pageNum%>&amount=<%=amount%>'" value="취소">
             <input type="submit" class="btn btn-primary pull-right" value="저장">
         </form>
     </div>

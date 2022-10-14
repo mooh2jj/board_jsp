@@ -68,8 +68,8 @@ public class BoardDAO {
         }
         return -1; // 데이터 베이스 오류
     }
-
-    public int getFileNext() {
+//    TODO: file_id 증가 처리
+/*    public int getFileNext() {
         String query = "SELECT id FROM File ORDER BY id DESC";
         try {
             PreparedStatement pstmt = conn.prepareStatement(query);
@@ -84,7 +84,7 @@ public class BoardDAO {
             e.printStackTrace();
         }
         return -1; // 데이터 베이스 오류
-    }
+    }*/
 
     public int write(Board board) {
         String query = "INSERT INTO Board";
@@ -103,36 +103,62 @@ public class BoardDAO {
             pstmt.setTimestamp(9, null);
             int resultCnt = pstmt.executeUpdate();
             pstmt.close();
-            System.out.println("resultCnt: "+ resultCnt);
+            System.out.println("resultCnt: " + resultCnt);
 
             return resultCnt;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return -1; // 데이터 베이스 오류
     }
 
-    public List<Board> getList(String searchOption, String keyword){
-        String query = "SELECT * FROM Board ";
+    public int getCnt() {
+        int result = 0;
+        String query = "SELECT COUNT(*) FROM Board";
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = conn.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                rs.close();
+                pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
 
+    public List<Board> getList(String searchOption, String keyword, int startNum, int amount) {
+        String query = "SELECT * FROM Board ";
         List<Board> list = new ArrayList<>();
         try {
-            if(keyword != null && !keyword.equals("")) {
+            if (keyword != null && !keyword.equals("")) {
                 // 전체 검색인 경우
                 if ("all".equals(searchOption)) {
-                    query += "WHERE 1=1 AND (" + "title LIKE '%" + keyword.trim() + "%'";
-                    query += "OR content LIKE '%" + keyword.trim() + "%'";
-                    query += "OR writer LIKE '%" + keyword.trim() + "%')";
+                    query += "WHERE 1=1 AND (" + "title LIKE '%" + keyword.trim() + "%' ";
+                    query += "OR content LIKE '%" + keyword.trim() + "%' ";
+                    query += "OR writer LIKE '%" + keyword.trim() + "%') ";
+
                 // 전체 검색이 아닌 경우
                 } else {
-                    query += "WHERE " + searchOption.trim() + " LIKE '%" + keyword.trim() + "%' ORDER BY id";
+                    query += "WHERE " + searchOption.trim() + " LIKE '%" + keyword.trim() + "%' ";
                 }
-            } else query += "ORDER BY id";
-
-            System.out.println("getList query: "+query);
+            }
+            query += "ORDER BY id DESC ";
+            query += "LIMIT ?, ?";
+            System.out.println("startNum: "+ startNum + ", amount: "+amount);
+            System.out.println("getList query: " + query);
             PreparedStatement pstmt = conn.prepareStatement(query);
 //            pstmt.setInt(1, getNext() - (pageNumber - 1) * 10);
+            pstmt.setInt(1, startNum);
+            pstmt.setInt(2, amount);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 Board board = new Board();
@@ -145,8 +171,9 @@ public class BoardDAO {
                 board.setFileName(rs.getString(7));
                 board.setCreatedAt(rs.getTimestamp(8));
                 board.setUpdatedAt(rs.getTimestamp(9));
+
                 list.add(board);
-                System.out.println("getList board: "+board);
+                System.out.println("getList list: " + list);
             }
             rs.close();
             pstmt.close();
@@ -156,13 +183,13 @@ public class BoardDAO {
         return list;
     }
 
-    public Board getBoard(long id){
+    public Board getBoard(long id) {
         String query = "SELECT * FROM Board WHERE id = ?";
         try {
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setLong(1, id);
             rs = pstmt.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 Board board = new Board();
                 board.setId(rs.getLong(1));
                 board.setCategory(rs.getString(2));

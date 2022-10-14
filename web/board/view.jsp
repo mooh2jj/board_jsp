@@ -34,6 +34,20 @@
     Board board = boardDAO.getBoard(id);
 
     boardDAO.updateHit(board);
+
+    // 페이지 처리 pageNum, amount
+    int pageNum = 0;
+    int amount = 10;    // 한 페이지에 보여줄 글의 갯수
+
+    String pageNumStr = request.getParameter("pageNum");
+    System.out.println("pageNumStr: "+ pageNumStr);
+
+    if (pageNumStr == null) {
+        pageNum = 1;
+    } else{
+        pageNum = Integer.parseInt(pageNumStr);
+        System.out.println("======pageNum: "+ pageNum);
+    }
 %>
 <h2>게시판 - 보기</h2>
 
@@ -68,8 +82,8 @@ ${board.writer}
                 </c:choose>
             </tr>
         </table>
-        <a href="list.jsp" class="btn btn-primary">목록</a>
-        <a href="modify.jsp?id=${board.id}" class="btn btn-primary">수정</a>
+        <a href="list.jsp?pageNum=<%=pageNum%>&amount=<%=amount%>" class="btn btn-primary">목록</a>
+        <a href="modify.jsp?id=${board.id}&pageNum=<%=pageNum%>" class="btn btn-primary">수정</a>
         <a onclick="return confirm('정말로 삭제하시겠습니까?')" href="deleteAction.jsp?id=${board.id}" class="btn btn-primary">삭제</a>
 
     </div>
