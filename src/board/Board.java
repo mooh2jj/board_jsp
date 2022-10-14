@@ -9,6 +9,7 @@ public class Board {
     private String content;
     private String writer;
     private int hit;
+    private String fileName;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
@@ -76,6 +77,14 @@ public class Board {
         this.updatedAt = updatedAt;
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
     @Override
     public String toString() {
         return "Board{" +
@@ -85,6 +94,7 @@ public class Board {
                 ", content='" + content + '\'' +
                 ", writer='" + writer + '\'' +
                 ", hit=" + hit +
+                ", fileName=" + fileName +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

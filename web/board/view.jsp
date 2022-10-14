@@ -7,6 +7,7 @@
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="board.Board"%>
@@ -22,8 +23,8 @@
     if (request.getParameter("id") != null) {
         id = Long.parseLong(request.getParameter("id"));
     }
+    PrintWriter script = response.getWriter();
     if (id == 0) {
-        PrintWriter script = response.getWriter();
         script.println("<script>");
         script.println("alert('유효하지 않은 글입니다.')");
         script.println("location.href='board.jsp'");
@@ -34,49 +35,42 @@
 
     boardDAO.updateHit(board);
 %>
-
 <h2>게시판 - 보기</h2>
 
 <br>
-<br>
 <%--바로 조회수 1 추가해진 상태로 볼 수 있게 해줌--%>
-조회수: <%=board.getHit()+1%>
+<c:set var="board" value="<%=board%>"/>
+${board.writer}
+<br>
+등록일시 <fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="${board.createdAt}"/>
+수정일시 <fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="${board.updatedAt}"/> <br>
+[${board.category}]${board.title} 조회수: <%=board.getHit()+1%>
+
+<hr>
 
 <div class="container">
     <div class="row">
-        <table class="table table-striped"
-               style="text-align: center; border: 1px solid #dddddd;">
+        <table class="table table-striped">
             <tr>
-                <td style="width: 20%;">작성자</td>
-                <td colspan="2"><%=board.getWriter()%></td>
-            </tr>            
-            <tr>
-                <td style="width: 20%;">카테고리</td>
-                <td colspan="2"><%=board.getCategory()%></td>
-            </tr>
-            <tr>
-                <td style="width: 20%;">글 제목</td>
-                <td colspan="2"><%=board.getTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>")%></td>
-            </tr>
-            <tr>
-                <td style="width: 20%;">등록일시</td>
-                <td colspan="2"><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="<%=board.getCreatedAt()%>"/></td>
-            </tr>
-            <tr>
-                <td style="width: 20%;">수정일시</td>
-                <td colspan="2"><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="<%=board.getUpdatedAt()%>"/></td>
-            </tr>
-            <tr>
-                <td style="width: 20%;">내용</td>
-                <td colspan="2" style="min-height: 200px; text-align: left;">
+                <td style="min-height: 200px; text-align: left;">
                     <%=
                     board.getContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>")
                     %></td>
             </tr>
+            <tr>
+                <c:choose>
+                    <c:when test="${board.fileName ne null}">
+                        <td><a href="downloadAction.jsp?fileName=<%=java.net.URLEncoder.encode(board.getFileName(), "UTF-8")%>">${board.fileName}</a></td>
+                    </c:when>
+                    <c:otherwise>
+                        <span>&nbsp;</span>
+                    </c:otherwise>
+                </c:choose>
+            </tr>
         </table>
         <a href="list.jsp" class="btn btn-primary">목록</a>
-        <a href="modify.jsp?id=<%= id %>" class="btn btn-primary">수정</a>
-        <a onclick="return confirm('정말로 삭제하시겠습니까?')" href="deleteAction.jsp?id=<%= id %>" class="btn btn-primary">삭제</a>
+        <a href="modify.jsp?id=${board.id}" class="btn btn-primary">수정</a>
+        <a onclick="return confirm('정말로 삭제하시겠습니까?')" href="deleteAction.jsp?id=${board.id}" class="btn btn-primary">삭제</a>
 
     </div>
 </div>

@@ -8,6 +8,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="board.Board"%>
 <%@ page import="board.BoardDAO"%>
@@ -37,6 +38,7 @@
     }
     Board board = new BoardDAO().getBoard(id);
 %>
+<c:set var="board" value="<%=board%>"/>
 
 <div class="container">
     <div class="row">
@@ -89,6 +91,20 @@
                         <textarea class="form-control" placeholder="내용"
                                   name="content" maxlength="2048" style="height: 350px;">
                                   <%=board.getContent()%></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 20%; background-color: #eeeeee;">파일 첨부</td>
+                    <td colspan="2">
+                    <c:choose>
+                        <c:when test="${board.fileName ne null}">
+                            <a href="downloadAction.jsp?fileName=<%=java.net.URLEncoder.encode(board.getFileName(), "UTF-8")%>"><%=board.getFileName()%></a><br>
+                        </c:when>
+                        <c:otherwise>
+                            <span>&nbsp;</span><br>
+                        </c:otherwise>
+                    </c:choose>
+                        <input type="file" name="upload" value="" class="board_view_input" />
                     </td>
                 </tr>
             </table>

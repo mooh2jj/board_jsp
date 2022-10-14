@@ -53,6 +53,7 @@
     } else {
         BoardDAO boardDAO = new BoardDAO();
         int result = boardDAO.update(board);
+        // TODO: 파일 삭제 후 수정 처리
 
         if (result == -1) {
             PrintWriter script = response.getWriter();

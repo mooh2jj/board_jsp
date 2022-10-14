@@ -69,10 +69,27 @@ public class BoardDAO {
         return -1; // 데이터 베이스 오류
     }
 
+    public int getFileNext() {
+        String query = "SELECT id FROM File ORDER BY id DESC";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) + 1;
+            }
+            rs.close();
+            pstmt.close();
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1; // 데이터 베이스 오류
+    }
+
     public int write(Board board) {
         String query = "INSERT INTO Board";
-        query += " (id, category, title, content, writer, hit, createdAt, updatedAt)";
-        query += " VALUES(?,?,?,?,?,?,?,?)";
+        query += " (id, category, title, content, writer, hit, file_name, createdAt, updatedAt)";
+        query += " VALUES(?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setLong(1, getNext());
@@ -81,10 +98,12 @@ public class BoardDAO {
             pstmt.setString(4, board.getContent());
             pstmt.setString(5, board.getWriter());
             pstmt.setInt(6, 0);
-            pstmt.setTimestamp(7, getTimeStamp());
-            pstmt.setTimestamp(8, null);
+            pstmt.setString(7, board.getFileName());
+            pstmt.setTimestamp(8, getTimeStamp());
+            pstmt.setTimestamp(9, null);
             int resultCnt = pstmt.executeUpdate();
             pstmt.close();
+            System.out.println("resultCnt: "+ resultCnt);
 
             return resultCnt;
         }
@@ -123,8 +142,9 @@ public class BoardDAO {
                 board.setContent(rs.getString(4));
                 board.setWriter(rs.getString(5));
                 board.setHit(rs.getInt(6));
-                board.setCreatedAt(rs.getTimestamp(7));
-                board.setUpdatedAt(rs.getTimestamp(8));
+                board.setFileName(rs.getString(7));
+                board.setCreatedAt(rs.getTimestamp(8));
+                board.setUpdatedAt(rs.getTimestamp(9));
                 list.add(board);
                 System.out.println("getList board: "+board);
             }
@@ -150,8 +170,9 @@ public class BoardDAO {
                 board.setContent(rs.getString(4));
                 board.setWriter(rs.getString(5));
                 board.setHit(rs.getInt(6));
-                board.setCreatedAt(rs.getTimestamp(7));
-                board.setUpdatedAt(rs.getTimestamp(8));
+                board.setFileName(rs.getString(7));
+                board.setCreatedAt(rs.getTimestamp(8));
+                board.setUpdatedAt(rs.getTimestamp(9));
                 return board;
             }
             rs.close();
@@ -173,7 +194,6 @@ public class BoardDAO {
             pstmt.setLong(5, board.getId());
             int resultCnt = pstmt.executeUpdate();
             pstmt.close();
-
             return resultCnt;
         } catch (Exception e) {
             e.printStackTrace();
@@ -195,4 +215,27 @@ public class BoardDAO {
         }
         return -1; // 데이터 베이스 오류
     }
+
+/*    public int fileUpload(File file, long boardId) {
+        String query = "INSERT INTO File";
+        query += " (id, board_id, fileName, originFileName, size, createdAt)";
+        query += " VALUES(?,?,?,?,?,?)";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setLong(1, getFileNext());
+            pstmt.setLong(2, boardId);
+            pstmt.setString(3, file.getFileName());
+            pstmt.setString(4, file.getOriginFileName());
+            pstmt.setString(5, file.getSize());
+            pstmt.setTimestamp(6, getTimeStamp());
+
+            int resultCnt = pstmt.executeUpdate();
+            pstmt.close();
+            System.out.println("fileUpload resultCnt: "+resultCnt);
+            return resultCnt;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1; // 데이터 베이스 오류
+    }*/
 }
