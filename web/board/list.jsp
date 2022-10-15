@@ -36,6 +36,7 @@ isELIgnored="false"
     }
 
     startNum = (pageNum-1) * amount;      // pageNum =1 이면, startNum=0
+    //    (cri.getPageNum() - 1) * cri.getAmount()
     endPage = ((int)Math.ceil((double)pageNum / (double)amount)) * amount;
 
     startPage = endPage - 9;
@@ -54,6 +55,7 @@ isELIgnored="false"
     prev = startPage > 1;
     next = endPage < realEnd;
 
+    System.out.println("startNum: "+ startNum + ", amount: "+amount);
     System.out.println("total: "+total);
     System.out.println("endPage: "+ endPage + ", startPage: "+startPage);
     System.out.println("realEnd: "+realEnd);
@@ -154,7 +156,8 @@ isELIgnored="false"
                 <ul class="pagination">
                     <c:if test="<%=prev%>">
                         <li class="pagination_button prev">
-                            <a href="list.jsp?pageNum=<%=startPage - 1 %>&amount=<%=amount%>">Previous</a>
+                            <a href="list.jsp?pageNum=<%=1%>&amount=<%=amount%>">&lt;&lt;</a>
+                            <a href="list.jsp?pageNum=<%=startPage - 1 %>&amount=<%=amount%>">&lt;</a>
                         </li>
                     </c:if>
 
@@ -175,7 +178,8 @@ isELIgnored="false"
 
                     <c:if test="<%=next%>">
                         <li class="pagination_button">
-                            <a href="list.jsp?pageNum=<%=endPage + 1%>&amount=<%=amount%>">Next</a>
+                            <a href="list.jsp?pageNum=<%=endPage + 1%>&amount=<%=amount%>">&gt;</a>
+                            <a href="list.jsp?pageNum=<%=realEnd%>&amount=<%=amount%>">&gt;&gt;</a>
                         </li>
                     </c:if>
                 </ul>

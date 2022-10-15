@@ -153,7 +153,6 @@ public class BoardDAO {
             }
             query += "ORDER BY id DESC ";
             query += "LIMIT ?, ?";
-            System.out.println("startNum: "+ startNum + ", amount: "+amount);
             System.out.println("getList query: " + query);
             PreparedStatement pstmt = conn.prepareStatement(query);
 //            pstmt.setInt(1, getNext() - (pageNumber - 1) * 10);
