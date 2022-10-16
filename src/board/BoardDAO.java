@@ -1,5 +1,8 @@
 package board;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +12,7 @@ import static connection.DBConnectionUtil.getConnection;
 
 public class BoardDAO {
 
+    private static final Logger logger = LoggerFactory.getLogger(BoardDAO.class);
     /**
      * 조회수 증가
      * @param board
@@ -27,7 +31,7 @@ public class BoardDAO {
             pstmt.setLong(1, board.getId());
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println(e);
+            logger.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, null);
@@ -39,7 +43,7 @@ public class BoardDAO {
      * @return Timestamp
      * @throws SQLException
      */
-    public Timestamp getTimeStamp() throws SQLException{
+    public Timestamp getTimeStamp() throws SQLException {
         String query = "SELECT NOW()";
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -55,7 +59,7 @@ public class BoardDAO {
                 throw new RuntimeException("TimeStamp Now not function");
             }
         } catch (SQLException e) {
-            System.err.println(e);
+            logger.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, rs);
@@ -83,7 +87,7 @@ public class BoardDAO {
                 throw new RuntimeException("getNext not found");
             }
         } catch (SQLException e) {
-            System.err.println(e);
+            logger.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, rs);
@@ -139,7 +143,7 @@ public class BoardDAO {
 
             return resultCnt;
         } catch (SQLException e) {
-            System.err.println(e);
+            logger.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, null);
@@ -168,7 +172,7 @@ public class BoardDAO {
                 throw new RuntimeException("getCnt not function");
             }
         } catch (SQLException e) {
-            System.err.println(e);
+            logger.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, rs);
@@ -232,7 +236,7 @@ public class BoardDAO {
             }
             return list;
         } catch (SQLException e) {
-            System.err.println(e);
+            logger.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, rs);
@@ -274,7 +278,7 @@ public class BoardDAO {
                 throw new NoSuchElementException("Board not found board=" + board);
             }
         } catch (SQLException e) {
-            System.err.println(e);
+            logger.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, rs);
@@ -302,7 +306,7 @@ public class BoardDAO {
             pstmt.setLong(5, board.getId());
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println(e);
+            logger.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, null);
@@ -327,7 +331,7 @@ public class BoardDAO {
             pstmt.setLong(1, id);
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println(e);
+            logger.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, null);
@@ -366,14 +370,14 @@ public class BoardDAO {
      */
     private void close(Connection con, PreparedStatement pstmt, ResultSet rs) {
         if (rs != null) {
-            try{
+            try {
                 rs.close();   // SQLException 터져도 여기서 나올 수 있어
-            } catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
 
-        if(pstmt != null) {
+        if (pstmt != null) {
             try {
                 pstmt.close();
             } catch (SQLException e) {
@@ -382,9 +386,9 @@ public class BoardDAO {
         }
 
         if (con != null) {
-            try{
+            try {
                 con.close();
-            } catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
