@@ -12,6 +12,7 @@
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="board.Board"%>
 <%@ page import="board.BoardDAO"%>
+<%@ page import="java.sql.SQLException" %>
 <html>
 <head>
     <title>게시글 상세보기</title>
@@ -31,9 +32,18 @@
         script.println("</script>");
     }
     BoardDAO boardDAO = new BoardDAO();
-    Board board = boardDAO.getBoard(id);
+    Board board = null;
+    try {
+        board = boardDAO.getBoard(id);
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
 
-    boardDAO.updateHit(board);
+    try {
+        boardDAO.updateHit(board);
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
 
     // 페이지 처리 pageNum, amount
     int pageNum = 0;
@@ -73,8 +83,9 @@ ${board.writer}
             </tr>
             <tr>
                 <c:choose>
-                    <c:when test="${board.fileName ne null}">
-                        <td><a href="downloadAction.jsp?fileName=<%=java.net.URLEncoder.encode(board.getFileName(), "UTF-8")%>">${board.fileName}</a></td>
+                    <c:when test="${board.fileId ne null}">
+                        // TODO: 파일 fileId 수정 처리
+                        <td><a href="downloadAction.jsp?fileId=<%=java.net.URLEncoder.encode(String.format("fileId: %s", board.getFileId()), "UTF-8")%>">${board.fileId}</a></td>
                     </c:when>
                     <c:otherwise>
                         <span>&nbsp;</span>

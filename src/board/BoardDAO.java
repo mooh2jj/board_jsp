@@ -1,5 +1,6 @@
 package board;
 
+import file.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,8 +121,8 @@ public class BoardDAO {
      */
     public int write(Board board) throws SQLException {
         String query = "INSERT INTO Board";
-        query += " (id, category, title, content, writer, hit, file_name, createdAt, updatedAt)";
-        query += " VALUES(?,?,?,?,?,?,?,?,?)";
+        query += " (id, category, title, content, writer, hit, createdAt, updatedAt)";
+        query += " VALUES(?,?,?,?,?,?,?,?)";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -135,9 +136,9 @@ public class BoardDAO {
             pstmt.setString(4, board.getContent());
             pstmt.setString(5, board.getWriter());
             pstmt.setInt(6, 0);
-            pstmt.setString(7, board.getFileName());
-            pstmt.setTimestamp(8, getTimeStamp());
-            pstmt.setTimestamp(9, null);
+//            pstmt.setLong(7, board.getFileId());
+            pstmt.setTimestamp(7, getTimeStamp());
+            pstmt.setTimestamp(8, null);
             int resultCnt = pstmt.executeUpdate();
             System.out.println("resultCnt: " + resultCnt);
 
@@ -227,7 +228,7 @@ public class BoardDAO {
                 board.setContent(rs.getString("content"));
                 board.setWriter(rs.getString("writer"));
                 board.setHit(rs.getInt("hit"));
-                board.setFileName(rs.getString("file_name"));
+//                board.setFileName(rs.getString("file_name"));
                 board.setCreatedAt(rs.getTimestamp("createdAt"));
                 board.setUpdatedAt(rs.getTimestamp("updatedAt"));
 
@@ -270,7 +271,7 @@ public class BoardDAO {
                 board.setContent(rs.getString("content"));
                 board.setWriter(rs.getString("writer"));
                 board.setHit(rs.getInt("hit"));
-                board.setFileName(rs.getString("file_name"));
+                board.setFileId(rs.getLong("file_id"));
                 board.setCreatedAt(rs.getTimestamp("createdAt"));
                 board.setUpdatedAt(rs.getTimestamp("updatedAt"));
                 return board;
@@ -339,28 +340,32 @@ public class BoardDAO {
 //        return -1; // 데이터 베이스 오류
     }
 
-/*    public int fileUpload(File file, long boardId) {
+    public int fileUpload(FileItem file) throws SQLException {
         String query = "INSERT INTO File";
-        query += " (id, board_id, fileName, originFileName, size, createdAt)";
-        query += " VALUES(?,?,?,?,?,?)";
+        query += " (board_id, file_name, origin_name, createdAt)";
+        query += " VALUES(?,?,?,?)";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
         try {
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setLong(1, getFileNext());
-            pstmt.setLong(2, boardId);
-            pstmt.setString(3, file.getFileName());
-            pstmt.setString(4, file.getOriginFileName());
-            pstmt.setString(5, file.getSize());
-            pstmt.setTimestamp(6, getTimeStamp());
+            conn = getConnection();
+            pstmt = conn.prepareStatement(query);
+            pstmt.setLong(1, file.getBoardId());
+            pstmt.setString(2, file.getFileName());
+            pstmt.setString(3, file.getOriginName());
+            pstmt.setTimestamp(4, getTimeStamp());
 
             int resultCnt = pstmt.executeUpdate();
-            pstmt.close();
             System.out.println("fileUpload resultCnt: "+resultCnt);
             return resultCnt;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            logger.error("db error", e);
+            throw e;
+        } finally {
+            close(conn, pstmt, null);
         }
-        return -1; // 데이터 베이스 오류
-    }*/
+    }
 
     /**
      * 커넥션 객체 반환하기 위한 close 메서드

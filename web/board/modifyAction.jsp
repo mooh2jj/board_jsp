@@ -10,6 +10,7 @@
 <%@ page import="board.BoardDAO"%>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="board.Board"%>
+<%@ page import="java.sql.SQLException" %>
 <% request.setCharacterEncoding("UTF-8"); %>
 
 <jsp:useBean id="board" class="board.Board" scope="page" />
@@ -52,7 +53,12 @@
         script.println("</script>");
     } else {
         BoardDAO boardDAO = new BoardDAO();
-        int result = boardDAO.update(board);
+        int result = 0;
+        try {
+            result = boardDAO.update(board);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         // TODO: 파일 삭제 후 수정 처리
 
         if (result == -1) {

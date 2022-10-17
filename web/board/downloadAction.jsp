@@ -35,6 +35,7 @@
 
     String uploadPath = "C:\\WebStudy\\WebDevelement\\JSP\\board_jsp\\upload";
 
+    // TODO: 다중 파일 업로드 이후 다중 파일 다운로드 처리 fileName -> fileId로 처리
     try {
         String fileName = request.getParameter("fileName");
         try {

@@ -58,7 +58,9 @@
 <%--                        <input type="file" name="file2"> <br>--%>
 <%--                        <input type="file" name="file3">--%>
                     <%-- TODO: 다중 파일 업로드 처리      --%>
-                        <input type="file" name="upload" value="" class="board_view_input" />
+                        <input type="file" name="file1" value="" class="board_view_input" />
+                        <input type="file" name="file2" value="" class="board_view_input" />
+                        <input type="file" name="file3" value="" class="board_view_input" />
                     </td>
                 </tr>
             </table>

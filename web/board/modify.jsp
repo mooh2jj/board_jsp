@@ -12,6 +12,7 @@
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="board.Board"%>
 <%@ page import="board.BoardDAO"%>
+<%@ page import="java.sql.SQLException" %>
 <html>
 <head>
     <title>게시글 수정</title>
@@ -49,7 +50,12 @@
         script.println("location.href='board.jsp'");
         script.println("</script>");
     }
-    Board board = new BoardDAO().getBoard(id);
+    Board board = null;
+    try {
+        board = new BoardDAO().getBoard(id);
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
 %>
 <c:set var="board" value="<%=board%>"/>
 
@@ -110,9 +116,10 @@
                     <td style="width: 20%; background-color: #eeeeee;">파일 첨부</td>
                     <td colspan="2">
                     <c:choose>
-                        <c:when test="${board.fileName ne null}">
-                            <a href="downloadAction.jsp?fileName=<%=java.net.URLEncoder.encode(board.getFileName(), "UTF-8")%>"><%=board.getFileName()%></a><br>
-                        </c:when>
+                        // TODO: 파일 fileId 수정 처리
+                        <c:when test="${board.fileId ne null}">
+                            <a href="downloadAction.jsp?fileId=<%=java.net.URLEncoder.encode(String.format("fileId: %s", board.getFileId()), "UTF-8")%>">${board.fileId}</a> <br>
+                            </c:when>
                         <c:otherwise>
                             <span>&nbsp;</span><br>
                         </c:otherwise>
