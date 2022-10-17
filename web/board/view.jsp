@@ -84,7 +84,7 @@ ${board.writer}
             <tr>
                 <c:choose>
                     <c:when test="${board.fileId ne null}">
-                        // TODO: 파일 fileId 수정 처리
+                        <%-- TODO: 파일 fileId 수정 처리--%>
                         <td><a href="downloadAction.jsp?fileId=<%=java.net.URLEncoder.encode(String.format("fileId: %s", board.getFileId()), "UTF-8")%>">${board.fileId}</a></td>
                     </c:when>
                     <c:otherwise>

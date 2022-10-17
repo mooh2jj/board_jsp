@@ -116,7 +116,7 @@
                     <td style="width: 20%; background-color: #eeeeee;">파일 첨부</td>
                     <td colspan="2">
                     <c:choose>
-                        // TODO: 파일 fileId 수정 처리
+                        <%--TODO: 파일 fileId 수정 처리--%>
                         <c:when test="${board.fileId ne null}">
                             <a href="downloadAction.jsp?fileId=<%=java.net.URLEncoder.encode(String.format("fileId: %s", board.getFileId()), "UTF-8")%>">${board.fileId}</a> <br>
                             </c:when>
