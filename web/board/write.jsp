@@ -1,3 +1,4 @@
+<%@ page import="board.BoardDAO" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!doctype html>
@@ -24,6 +25,8 @@
         pageNum = Integer.parseInt(pageNumStr);
         System.out.println("======pageNum: "+ pageNum);
     }
+
+    BoardDAO boardDAO = null;
 %>
 
 <h2>게시판 - 등록</h2>
@@ -37,7 +40,20 @@
                    style="text-align: center; border: 1px solid #dddddd;">
                 <tr>
                     <td style="width: 20%; background-color: #eeeeee;">카테고리</td>
-                    <td colspan="2"><input type="text" class="form-control" placeholder="카테고리" name="category" maxlength="50"></td>
+                    <td colspan="2">
+                        <select name="category" size="1">
+                            <option value="" selected></option>
+                            <%
+                                boardDAO = new BoardDAO();
+                                int categoryCnt = boardDAO.getCategory().size();
+                                for (int i = 0; i < categoryCnt; i++) {
+                            %>
+                            <option value=<%=boardDAO.getCategory().get(i)%>><%=boardDAO.getCategory().get(i)%></option>
+                            <%
+                                }
+                            %>
+                        </select>
+                    </td>
                 </tr>
                 <tr>
                     <td style="width: 20%; background-color: #eeeeee;">작성자</td>
@@ -54,9 +70,6 @@
                 <tr>
                     <td style="width: 20%; background-color: #eeeeee;">파일 첨부</td>
                     <td>
-<%--                        <input type="file" name="file1"> <br>--%>
-<%--                        <input type="file" name="file2"> <br>--%>
-<%--                        <input type="file" name="file3">--%>
                     <%-- TODO: 다중 파일 업로드 처리      --%>
                         <input type="file" name="file1" value="" class="board_view_input" />
                         <input type="file" name="file2" value="" class="board_view_input" />

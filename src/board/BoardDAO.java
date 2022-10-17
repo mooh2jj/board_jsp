@@ -287,6 +287,38 @@ public class BoardDAO {
     }
 
     /**
+     * select 카테고리 모음
+     * @return 카테고리 List
+     * @throws SQLException
+     */
+    public List<String> getCategory() throws SQLException {
+        String query = "SELECT category FROM board GROUP BY category ORDER BY category";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        String category = "";
+        List<String> list = new ArrayList<>();
+        try {
+
+            conn = getConnection();
+            pstmt = conn.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                category = rs.getString("category");
+                list.add(category);
+            }
+        } catch (SQLException e) {
+            logger.error("db error", e);
+            throw e;
+        } finally {
+            close(conn, pstmt, rs);
+        }
+        return list;
+    }
+
+    /**
      * 게시글 글 수정
      * @param board
      * @return 수정 영향을 미친 값
