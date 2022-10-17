@@ -13,6 +13,7 @@
 <%@ page import="board.Board"%>
 <%@ page import="board.BoardDAO"%>
 <%@ page import="java.sql.SQLException" %>
+<%@ page import="common.PageDTO" %>
 <html>
 <head>
     <title>게시글 수정</title>
@@ -20,18 +21,23 @@
 <body>
 <%
     // 페이지 처리 pageNum, amount
-    int pageNum = 0;
-    int amount = 10;    // 한 페이지에 보여줄 글의 갯수
 
     String pageNumStr = request.getParameter("pageNum");
     System.out.println("pageNumStr: "+ pageNumStr);
 
-    if (pageNumStr == null) {
-        pageNum = 1;
-    } else{
-        pageNum = Integer.parseInt(pageNumStr);
-        System.out.println("======pageNum: "+ pageNum);
+    BoardDAO boardDAO = new BoardDAO();
+
+    int pageNum = 0;
+    int amount = 10;      // 페이지에 보여질 갯수
+    int total = 0;
+    try {
+        total = boardDAO.getCnt();
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
     }
+
+    PageDTO pageDTO = new PageDTO(pageNumStr, amount, total);
+    pageNum = pageDTO.getPageNum();
 %>
 
 <h2>게시판 - 수정</h2>
@@ -61,7 +67,7 @@
 
 <div class="container">
     <div class="row">
-        <form action="modifyAction.jsp?id=<%=id%>" method="post">
+        <form action="modifyAction.jsp?id=<%=id%>&pageNum=<%=pageNum%>&amount=<%=amount%>" method="post">
             <table class="table table-striped"
                    style="text-align: center; border: 1px solid #dddddd;">
                 <tr>

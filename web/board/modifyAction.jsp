@@ -9,8 +9,8 @@
          pageEncoding="UTF-8"%>
 <%@ page import="board.BoardDAO"%>
 <%@ page import="java.io.PrintWriter"%>
-<%@ page import="board.Board"%>
 <%@ page import="java.sql.SQLException" %>
+<%@ page import="common.PageDTO" %>
 <% request.setCharacterEncoding("UTF-8"); %>
 
 <jsp:useBean id="board" class="board.Board" scope="page" />
@@ -40,6 +40,21 @@
     }
 
 //    Board board = new BoardDAO().getBoard(id);
+    BoardDAO boardDAO = new BoardDAO();
+
+    String pageNumStr = request.getParameter("pageNum");
+    int pageNum = 0;
+    int amount = 10;      // 페이지에 보여질 갯수
+    int total = 0;
+    try {
+        total = boardDAO.getCnt();
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+    int result = 0;
+
+    PageDTO pageDTO = new PageDTO(pageNumStr, amount, total);
+    pageNum = pageDTO.getPageNum();
 
     System.out.println("modify board: "+ board);
 
@@ -52,28 +67,26 @@
         script.println("history.back()");
         script.println("</script>");
     } else {
-        BoardDAO boardDAO = new BoardDAO();
-        int result = 0;
         try {
             result = boardDAO.update(board);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         // TODO: 파일 삭제 후 수정 처리
-
-        if (result == -1) {
-            PrintWriter script = response.getWriter();
-            script.println("<script>");
-            script.println("alert('글 수정에 실패했습니다.')");
-            script.println("history.back()");
-            script.println("</script>");
-        } else {
-            PrintWriter script = response.getWriter();
-            script.println("<script>");
-            script.print("location.href = 'list.jsp'");
-            script.println("</script>");
-        }
     }
 %>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        let result = <%=result%>;
+
+        if (result === -1) {
+            alert('글 수정에 실패했습니다.');
+            history.back();
+        } else {
+            location.href = "list.jsp?pageNum=<%=pageNum%>&amount=<%=amount%>";
+        }
+    });
+</script>
 </body>
 </html>
