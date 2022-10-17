@@ -6,6 +6,8 @@ isELIgnored="false"
 <%@ page import="board.BoardDAO"%>
 <%@ page import="board.Board"%>
 <%@ page import="java.util.List" %>
+<%@ page import="common.PageDTO" %>
+<%@ page import="java.sql.SQLException" %>
 
 <%
     request.setCharacterEncoding("UTF-8");
@@ -14,57 +16,32 @@ isELIgnored="false"
     BoardDAO boardDAO = new BoardDAO();
 
     // 페이지 설정 추가
-    int startNum = 0;
-    int endPage = 0;
-    int startPage = 0;
-    int amount = 10;    // 한 페이지에 보여줄 글의 갯수
-
-    boolean prev;
-    boolean next;
-
-    int total = boardDAO.getCnt();        // 총 카운트=게시글 총 갯수
-    int pageNum = 0;
-
     String pageNumStr = request.getParameter("pageNum");
     System.out.println("pageNumStr: "+ pageNumStr);
-
-    if (pageNumStr == null) {
-        pageNum = 1;
-    } else{
-        pageNum = Integer.parseInt(pageNumStr);
-        System.out.println("======pageNum: "+ pageNum);
+    int total = 0;        // 총 카운트=게시글 총 갯수
+    int amount = 10;      // 페이지에 보여질 갯수
+    try {
+        total = boardDAO.getCnt();
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
     }
+    PageDTO pageDTO = new PageDTO(pageNumStr, amount, total);
 
-    startNum = (pageNum-1) * amount;      // pageNum =1 이면, startNum=0
-    //    (cri.getPageNum() - 1) * cri.getAmount()
-    endPage = ((int)Math.ceil((double)pageNum / (double)amount)) * amount;
+    int pageNum = pageDTO.getPageNum();
+    int startNum = pageDTO.getStartNum();
+    int startPage = pageDTO.getStartPage();
+    int endPage = pageDTO.getEndPage();
+    int realEnd = pageDTO.getRealEnd();
+    boolean prev = pageDTO.isPrev();
+    boolean next = pageDTO.isNext();
 
-    startPage = endPage - 9;
-
-    if(1 > startPage ){
-        startPage  = 1;
+    List<Board> list = null;
+    try {
+        list = boardDAO.getList(searchOption, keyword, startNum, amount);
+        System.out.println("list.jsp, list: "+ list);
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
     }
-
-    int realEnd = (int) Math.ceil((double) total / (double) amount);
-
-    if(realEnd < endPage) {
-        endPage = realEnd;
-    }
-
-    //이전, 다음 버튼 표출 여부 결정
-    prev = startPage > 1;
-    next = endPage < realEnd;
-
-    System.out.println("startNum: "+ startNum + ", amount: "+amount);
-    System.out.println("total: "+total);
-    System.out.println("endPage: "+ endPage + ", startPage: "+startPage);
-    System.out.println("realEnd: "+realEnd);
-    System.out.println("prev: "+ prev +", next: "+ next);
-
-    System.out.println("searchOption: "+ searchOption +", keyword: "+ keyword);
-
-    List<Board> list = boardDAO.getList(searchOption, keyword, startNum, amount);
-    System.out.println("list.jsp, list: "+ list);
 %>
 
 <c:set var="searchOption" value="<%=searchOption%>" />
@@ -149,8 +126,8 @@ isELIgnored="false"
             <% } %>--%>
 
             <%
-                System.out.println("pageNum: "+ pageNum);
-                System.out.println("prev: "+ prev +", next: "+ next);
+                System.out.println("list view pageNum: "+ pageNum);
+                System.out.println("list view prev: "+ prev +", next: "+ next);
             %>
             <div>
                 <ul class="pagination">
