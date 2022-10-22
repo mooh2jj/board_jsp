@@ -1,16 +1,18 @@
 package connection;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.sql.*;
 
 import static connection.ConnectionConst.*;
 
-
+@Slf4j
 public class DBConnectionUtil {
     public static Connection getConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("get connection=" + connection + ", class=" + connection.getClass());
+            log.info("get connection={}, class={}",connection, connection.getClass());
             return connection;
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -23,7 +25,6 @@ public class DBConnectionUtil {
      * @param pstmt
      * @param rs
      */
-    // TODO: Utils에 투입
     public static void close(Connection con, PreparedStatement pstmt, ResultSet rs) {
         if (rs != null) {
             try {
