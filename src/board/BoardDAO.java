@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static connection.DBConnectionUtil.close;
 import static connection.DBConnectionUtil.getConnection;
 
 public class BoardDAO {
@@ -344,7 +345,6 @@ public class BoardDAO {
         } finally {
             close(conn, pstmt, null);
         }
-//        return -1; // 데이터 베이스 오류
     }
 
     /**
@@ -369,7 +369,6 @@ public class BoardDAO {
         } finally {
             close(conn, pstmt, null);
         }
-//        return -1; // 데이터 베이스 오류
     }
 
     public int fileUpload(FileItem file) throws SQLException {
@@ -399,35 +398,4 @@ public class BoardDAO {
         }
     }
 
-    /**
-     * 커넥션 객체 반환하기 위한 close 메서드
-     * @param con
-     * @param pstmt
-     * @param rs
-     */
-    private void close(Connection con, PreparedStatement pstmt, ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();   // SQLException 터져도 여기서 나올 수 있어
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (pstmt != null) {
-            try {
-                pstmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }
