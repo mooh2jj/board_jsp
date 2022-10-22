@@ -1,13 +1,16 @@
 package connection;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
 import static connection.ConnectionConst.*;
 
-@Slf4j
+
 public class DBConnectionUtil {
+    private static final Logger log = LoggerFactory.getLogger(DBConnectionUtil.class);
+
     public static Connection getConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

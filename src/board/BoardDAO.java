@@ -14,7 +14,7 @@ import static connection.DBConnectionUtil.getConnection;
 
 public class BoardDAO {
 
-    private static final Logger logger = LoggerFactory.getLogger(BoardDAO.class);
+    private static final Logger log = LoggerFactory.getLogger(BoardDAO.class);
     /**
      * 조회수 증가
      * @param board
@@ -33,7 +33,7 @@ public class BoardDAO {
             pstmt.setLong(1, board.getId());
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            logger.error("db error", e);
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, null);
@@ -61,7 +61,7 @@ public class BoardDAO {
                 throw new RuntimeException("TimeStamp Now not function");
             }
         } catch (SQLException e) {
-            logger.error("db error", e);
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, rs);
@@ -89,7 +89,7 @@ public class BoardDAO {
                 throw new RuntimeException("getNext not found");
             }
         } catch (SQLException e) {
-            logger.error("db error", e);
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, rs);
@@ -145,7 +145,7 @@ public class BoardDAO {
 
             return resultCnt;
         } catch (SQLException e) {
-            logger.error("db error", e);
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, null);
@@ -174,7 +174,7 @@ public class BoardDAO {
                 throw new RuntimeException("getCnt not function");
             }
         } catch (SQLException e) {
-            logger.error("db error", e);
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, rs);
@@ -238,7 +238,7 @@ public class BoardDAO {
             }
             return list;
         } catch (SQLException e) {
-            logger.error("db error", e);
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, rs);
@@ -280,7 +280,39 @@ public class BoardDAO {
                 throw new NoSuchElementException("Board not found board=" + board);
             }
         } catch (SQLException e) {
-            logger.error("db error", e);
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+
+    /**
+     * 1개 게시글 패스워드 가져오기
+     * @param boardId
+     * @return password
+     * @throws SQLException
+     */
+    public String getPassword(long boardId) throws SQLException {
+        String query = "SELECT password FROM board WHERE id = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        String password = "";
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(query);
+            pstmt.setLong(1, boardId);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                password = rs.getString("password");
+            }
+
+        } catch (SQLException e) {
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, rs);
@@ -311,7 +343,7 @@ public class BoardDAO {
                 list.add(category);
             }
         } catch (SQLException e) {
-            logger.error("db error", e);
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, rs);
@@ -340,7 +372,7 @@ public class BoardDAO {
             pstmt.setLong(5, board.getId());
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            logger.error("db error", e);
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, null);
@@ -364,7 +396,7 @@ public class BoardDAO {
             pstmt.setLong(1, id);
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            logger.error("db error", e);
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, null);
@@ -391,7 +423,7 @@ public class BoardDAO {
             System.out.println("fileUpload resultCnt: "+resultCnt);
             return resultCnt;
         } catch (SQLException e) {
-            logger.error("db error", e);
+            log.error("db error", e);
             throw e;
         } finally {
             close(conn, pstmt, null);
