@@ -3,18 +3,39 @@ package connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
-
-import static connection.ConnectionConst.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 public class DBConnectionUtil {
     private static final Logger log = LoggerFactory.getLogger(DBConnectionUtil.class);
 
-    public static Connection getConnection() {
+    // DriverManager 사용
+/*    public static Connection getConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            log.info("get connection={}, class={}",connection, connection.getClass());
+            return connection;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }*/
+
+    /**
+     * DataSource(ConnectionPool 사용)
+     * @return
+     */
+    public static Connection getConnection() {
+        try {
+            Context init = new InitialContext();
+            DataSource dataSource = (DataSource) init.lookup("java:comp/env/jdbc/mysql");
+            Connection connection = dataSource.getConnection();
             log.info("get connection={}, class={}",connection, connection.getClass());
             return connection;
         } catch (Exception e) {
