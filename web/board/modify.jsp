@@ -84,7 +84,14 @@
                 </tr>
                 <tr>
                     <td style="width: 20%; background-color: #eeeeee;">수정일시</td>
-                    <td colspan="2"><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="<%=board.getUpdatedAt()%>"/></td>
+                    <c:choose>
+                        <c:when test="${board.updatedAt ne null}">
+                            <td colspan="2"><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="${board.updatedAt}"/></td>
+                        </c:when>
+                        <c:otherwise>
+                            <td colspan="2" style="text-align: center">-</td>
+                        </c:otherwise>
+                    </c:choose>
                 </tr>
                 <tr>
                     <td style="width: 20%; background-color: #eeeeee;">조회수</td>
