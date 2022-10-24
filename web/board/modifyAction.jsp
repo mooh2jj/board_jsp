@@ -30,6 +30,7 @@
     long id = 0L;
     if (request.getParameter("id") != null) {
         id = Long.parseLong(request.getParameter("id"));
+        System.out.println("boardId: "+id);
     }
     if (id == 0) {
         PrintWriter script = response.getWriter();
@@ -57,20 +58,40 @@
     pageNum = pageDTO.getPageNum();
 
     System.out.println("modify board: "+ board);
+    PrintWriter script = response.getWriter();
 
+    String password = request.getParameter("password");
+    System.out.println("modify password: "+password);
+    String dbPassword = null;
+    try {
+        dbPassword = boardDAO.getPassword(id);
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+    System.out.println("dbPassword: "+ dbPassword);
 
     if (request.getParameter("title") == null || request.getParameter("content") == null ||
-            request.getParameter("title").equals("") || request.getParameter("content").equals("")) {
-        PrintWriter script = response.getWriter();
+            request.getParameter("title").equals("") || request.getParameter("content").equals("") || password.equals("") ) {
         script.println("<script>");
         script.println("alert('입력이 안 된 사항이 있습니다.')");
-        script.println("history.back()");
+        script.println("history.back();");
         script.println("</script>");
     } else {
-        try {
-            result = boardDAO.update(board);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+
+        if(password.equals(dbPassword)){
+            script.println("<script>");
+            script.println("alert('패스워드가 일치 합니다. <br> 수정되었습니다.')");
+            script.println("</script>");
+            try {
+                result = boardDAO.update(board);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            script.println("<script>");
+            script.println("alert('패스워드가 맞지 않습니다.')");
+            script.println("history.back();");
+            script.println("</script>");
         }
         // TODO: 파일 삭제 후 수정 처리
     }

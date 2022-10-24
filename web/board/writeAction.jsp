@@ -17,17 +17,10 @@
 <%@ page import="java.util.Enumeration" %>
 <%@ page import="java.sql.SQLException" %>
 <%@ page import="file.FileItem" %>
+<%@ page import="file.FileItemDAO" %>
+<%@ page import="java.util.UUID" %>
 
 <% request.setCharacterEncoding("UTF-8"); %>
-
-<%--<jsp:useBean id="board" class="board.Board" scope="page" />
-<jsp:setProperty name="board" property="category" />
-<jsp:setProperty name="board" property="title" />
-<jsp:setProperty name="board" property="content" />
-<jsp:setProperty name="board" property="writer" />--%>
-
-<%--<jsp:useBean id="file" class="file.FileItem" scope="page" />--%>
-<%--<jsp:setProperty name="file" property="*" />--%>
 
 <!doctype html>
 <html lang="en">
@@ -45,22 +38,21 @@
     String title = "";
     String content = "";
     String writer = "";
+    String password = "";
 
     String item = "";
-    String fileName = "";
-    File file = null;
 
     FileItem fileItem = null;
 
-
     BoardDAO boardDAO = new BoardDAO();
+    FileItemDAO fileItemDAO = new FileItemDAO();
 
     int result = 0;
 
     try {
         // file 업로드 TODO: os에 따라 경로 설정, 다중 업로드 FileItem 저장, 연관관계 매핑 설정하기
         String uploadPath = "C:\\WebStudy\\WebDevelement\\JSP\\board_jsp\\upload";
-        int maxFileSize = 1024 * 1024 * 2;
+        int maxFileSize = 1024 * 1024 * 100;
         String encType = "utf-8";
 
         MultipartRequest multi
@@ -68,6 +60,7 @@
 
         category = multi.getParameter("category");
         title = multi.getParameter("title");
+        password = multi.getParameter("password");
         content = multi.getParameter("content");
         writer = multi.getParameter("writer");
 
@@ -75,63 +68,57 @@
         // TODO: Board, FileItem 테이블 연관관계 매핑 처리
         Board board = new Board();
         board.setCategory(category);
+        board.setPassword(password);
         board.setTitle(title);
         board.setContent(content);
         board.setWriter(writer);
-//    board.setFileId(fileItem.getId());
-//    board.setFileName(fileName);
-
-
-        try {
-            result = boardDAO.write(board);
-            System.out.println("result:" + result);
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
 
         System.out.println("board:" + board);
 
-
-        // fileItem write
+        // fileItem write, 다수일때
         Enumeration files = multi.getFileNames();  // 폼의 이름 반환
+        if (files != null) {
+            UUID uuid = UUID.randomUUID();
+            board.setFileYn(true);
 
-        while (files.hasMoreElements()) {
-            item = (String) files.nextElement();
-            fileName = multi.getFilesystemName(item);
-            String originFileName = multi.getOriginalFileName(item);
-
-            if (fileName != null) {
-                file = multi.getFile(item);
+            while (files.hasMoreElements()) {
+                item = (String) files.nextElement();
+                String fileSysName = multi.getFilesystemName(item);
+                String originFileName = multi.getOriginalFileName(item);
+                String uuidFileName = uuid + "_" + originFileName;
+                if(fileSysName == null) continue;
+                File file = multi.getFile(item);
                 if (file.exists()) {
                     long fileSize = file.length();
+
                     System.out.println("원본파일명: " + originFileName);
-                    System.out.println("파일명: " + file.getName());
+                    System.out.println("파일명: " + uuidFileName);
                     System.out.println("파일크기: " + fileSize);
 
                     System.out.println("board.getId(): " + board.getId());
 
                     fileItem = new FileItem();
+                    fileItem.setPath(uploadPath);
+                    fileItem.setFileUUIDName(uuidFileName);
+                    fileItem.setFileName(originFileName);
+                    fileItem.setSize(fileSize);
                     fileItem.setBoardId(1L);
-                    fileItem.setFileName(fileName);
-                    fileItem.setOriginName(originFileName);
 
-                    boardDAO.fileUpload(fileItem);
+                    fileItemDAO.fileUpload(fileItem);
+                }
 
+                File originFile = new File(uploadPath + "/" + originFileName);
+                System.out.println("originFile: "+ originFile);
+                File uuidFile = new File(uploadPath + "/" + uuidFileName);
+                System.out.println("uuidFile: "+ uuidFile);
+                // 파일 업로드
+                if (!originFile.renameTo(uuidFile)) {
+                    System.out.println("파일명변경 실패");
                 }
             }
-
-/*        if (fileName != null) {
-            File originFile = new File(uploadPath + "/" + fileName);
-            String ext = originFileName.substring(originFileName.lastIndexOf("."));
-            String fileTempName = System.currentTimeMillis() + ext;
-            long filesize = originFile.length();
-            File tempFile = new File(uploadPath + "/" + fileTempName);
-
-            if (!originFile.renameTo(tempFile)) {
-                System.out.println("파일명변경 실패");
-            }
-        }*/
+            board.setFileUUID(String.valueOf(uuid));
         }
+        result = boardDAO.write(board);
     } catch (Exception e) {
         e.printStackTrace();
     }

@@ -60,6 +60,15 @@
                     <td colspan="2"><input type="text" class="form-control" placeholder="작성자" name="writer" maxlength="50"></td>
                 </tr>
                 <tr>
+                    <td style="width: 20%; background-color: #eeeeee;">비밀번호</td>
+                    <td colspan="2">
+                        <input type="text" class="pw" placeholder="비밀번호" id="password" name="password" maxlength="50">
+                        <input type="text" class="pw" placeholder="비밀번호 확인" id="passwordCheck" name="passwordCheck" maxlength="50">
+                        <span id="alert-success" style="display: none; color: #2b52f6; font-weight: bold;">비밀번호가 일치합니다.</span>
+                        <span id="alert-danger" style="display: none; color: #d92742; font-weight: bold;">비밀번호가 일치하지 않습니다.</span>
+                    </td>
+                </tr>
+                <tr>
                     <td style="width: 20%; background-color: #eeeeee;">제목</td>
                     <td colspan="2"><input type="text" class="form-control" placeholder="제목" name="title" size="67" maxlength="300"></td>
                 </tr>
@@ -82,7 +91,30 @@
         </form>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script>
 
+    $(document).ready(function () {
+        $('.pw').focusout (function () {
+            let password = $("#password").val();
+            let passwordCheck = $("#passwordCheck").val();
+            console.log("password:", password);
+            console.log("passwordCheck:", passwordCheck);
 
+            if (password !== '' && passwordCheck === '') {
+                null;
+            } else if (password !== '' || passwordCheck !== '') {
+                if (password === passwordCheck) {
+                    $("#alert-success").css('display', 'inline-block');
+                    $("#alert-danger").css('display', 'none');
+                } else {
+                    alert("비밀번호가 일치하지 않습니다. 비밀번호를 재확인해주세요.");
+                    $("#alert-success").css('display', 'none');
+                    $("#alert-danger").css('display', 'inline-block');
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>

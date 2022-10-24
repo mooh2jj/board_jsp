@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 public class Board {
     private Long id;
     private String category;
+    private String password;
     private String title;
     private String content;
     private String writer;
