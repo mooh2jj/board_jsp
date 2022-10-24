@@ -17,7 +17,8 @@ public class Board {
     private String content;
     private String writer;
     private int hit;
-    private Long fileId;
+    private boolean fileYn;
+    private String fileUUID;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 

@@ -78,12 +78,9 @@
                 </tr>
                 <tr>
                     <td style="width: 20%; background-color: #eeeeee;">파일 첨부</td>
-                    <td>
-                    <%-- TODO: 다중 파일 업로드 처리      --%>
-                        <input type="file" name="file1" value="" class="board_view_input" />
-                        <input type="file" name="file2" value="" class="board_view_input" />
-                        <input type="file" name="file3" value="" class="board_view_input" />
-                    </td>
+                    <td><input type="file" name="file1" value="" class="board_view_input" /></td>
+                    <td><input type="file" name="file2" value="" class="board_view_input" /></td>
+                    <td><input type="file" name="file3" value="" class="board_view_input" /></td>
                 </tr>
             </table>
             <input type="button" class="btn btn-primary" onclick="location.href='list.jsp?pageNum=<%=pageNum%>&amount=<%=amount%>'" value="취소">

@@ -15,7 +15,10 @@ import java.sql.SQLException;
 public class DBConnectionUtil {
     private static final Logger log = LoggerFactory.getLogger(DBConnectionUtil.class);
 
-    // DriverManager 사용
+    /**
+     * DriverManager
+     * @return
+     */
 /*    public static Connection getConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -29,7 +32,7 @@ public class DBConnectionUtil {
 
     /**
      * DataSource(ConnectionPool 사용)
-     * @return
+     * @return Connection
      */
     public static Connection getConnection() {
         try {

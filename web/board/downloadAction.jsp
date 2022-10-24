@@ -6,9 +6,9 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"%>
-<%@ page import="java.io.PrintWriter"%>
-<%@ page import="java.io.*"%>
+         pageEncoding="UTF-8" %>
+<%@ page import="java.io.PrintWriter" %>
+<%@ page import="java.io.*" %>
 <%@ page import="java.lang.*" %>
 
 
@@ -35,16 +35,18 @@
 
     String uploadPath = "C:\\WebStudy\\WebDevelement\\JSP\\board_jsp\\upload";
 
-    // TODO: 다중 파일 업로드 이후 다중 파일 다운로드 처리 fileName -> fileId로 처리
     try {
-        String fileName = request.getParameter("fileName");
+        String fileUUIDName = request.getParameter("fileUUIDName");
         try {
-            file = new File(uploadPath + "/" + fileName);
+            file = new File(uploadPath + "/" + fileUUIDName);
             in = new FileInputStream(file);
         } catch (FileNotFoundException e) {
             skip = true;
             e.printStackTrace();
         }
+
+        String fileName = fileUUIDName.substring(fileUUIDName.indexOf("_") + 1);
+        System.out.println("fileName: " + fileName);
         String client = request.getHeader("User-Agent");
 
         // 파일 다운로드 헤더 지정
@@ -52,7 +54,7 @@
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Description", "JSP Generated Data");
 
-        if(!skip) {
+        if (!skip) {
             // IE
             if (client.indexOf("MSIE") != -1) {
                 response.setHeader("Content-Disposition", "attachment; filename=" + new String(fileName.getBytes("KSC5601"), "ISO8859_1"));
@@ -73,7 +75,7 @@
             while ((leng = in.read(b)) > 0) {
                 os.write(b, 0, leng);
             }
-        }else{
+        } else {
             response.setContentType("text/html;charset=UTF-8");
             script.println("<script language='javascript'>alert('파일을 찾을 수 없습니다');history.back();</script>");
         }

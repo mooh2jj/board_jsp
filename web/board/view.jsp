@@ -79,13 +79,14 @@ ${board.writer}
                 <td style="min-height: 200px; text-align: left;">
                     <%=
                     board.getContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>")
-                    %></td>
+                    %>
+                </td>
             </tr>
+            <c:forEach var="fileItem" items="<%=fileItemList%>">
             <tr>
                 <c:choose>
-                    <c:when test="${board.fileId ne null}">
-                        <%-- TODO: 파일 fileId 수정 처리--%>
-                        <td><a href="downloadAction.jsp?fileId=<%=java.net.URLEncoder.encode(String.format("fileId: %s", board.getFileId()), "UTF-8")%>">${board.fileId}</a></td>
+                    <c:when test="${fileItem.fileName ne null}">
+                        <td><a href="downloadAction.jsp?fileUUIDName=${fileItem.fileUUIDName}">${fileItem.fileName}</a></td>
                     </c:when>
                     <c:otherwise>
                         <span>&nbsp;</span>

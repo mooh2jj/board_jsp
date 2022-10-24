@@ -21,7 +21,7 @@ public class BoardDAO {
      * @return 최종 업데이트된 조회수
      * @throws SQLException
      */
-    public int updateHit(Board board) throws SQLException {
+    public int updateHit(Board board) throws SQLException {     // SQLException 컴파일예외는 throws를 해줘야
         String query = "UPDATE board SET hit=hit+1 where id=?";
 
         Connection conn = null;
@@ -94,25 +94,7 @@ public class BoardDAO {
         } finally {
             close(conn, pstmt, rs);
         }
-//        return -1; // 데이터 베이스 오류
     }
-//    TODO: file_id 증가 처리
-/*    public int getFileNext() {
-        String query = "SELECT id FROM File ORDER BY id DESC";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) + 1;
-            }
-            rs.close();
-            pstmt.close();
-            return 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return -1; // 데이터 베이스 오류
-    }*/
 
     /**
      * 게시판 글 등록
@@ -122,8 +104,8 @@ public class BoardDAO {
      */
     public int write(Board board) throws SQLException {
         String query = "INSERT INTO Board";
-        query += " (id, category, title, content, writer, hit, createdAt, updatedAt)";
-        query += " VALUES(?,?,?,?,?,?,?,?)";
+        query += " (id, category, password, title, content, writer, hit, file_yn, file_uuid, created_at, updated_at)";
+        query += " VALUES(?,?,?,?,?,?,?,?,?,?,?)";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -133,13 +115,15 @@ public class BoardDAO {
             pstmt = conn.prepareStatement(query);
             pstmt.setLong(1, getNext());
             pstmt.setString(2, board.getCategory());
-            pstmt.setString(3, board.getTitle());
-            pstmt.setString(4, board.getContent());
-            pstmt.setString(5, board.getWriter());
-            pstmt.setInt(6, 0);
-//            pstmt.setLong(7, board.getFileId());
-            pstmt.setTimestamp(7, getTimeStamp());
-            pstmt.setTimestamp(8, null);
+            pstmt.setString(3, board.getPassword());
+            pstmt.setString(4, board.getTitle());
+            pstmt.setString(5, board.getContent());
+            pstmt.setString(6, board.getWriter());
+            pstmt.setInt(7, 0);
+            pstmt.setBoolean(8, board.isFileYn());
+            pstmt.setString(9, board.getFileUUID());
+            pstmt.setTimestamp(10, getTimeStamp());
+            pstmt.setTimestamp(11, null);
             int resultCnt = pstmt.executeUpdate();
             System.out.println("resultCnt: " + resultCnt);
 
@@ -201,7 +185,7 @@ public class BoardDAO {
                 query += "OR content LIKE '%" + keyword.trim() + "%' ";
                 query += "OR writer LIKE '%" + keyword.trim() + "%') ";
 
-            // 전체 검색이 아닌 경우
+                // 전체 검색이 아닌 경우
             } else {
                 query += "WHERE " + searchOption.trim() + " LIKE '%" + keyword.trim() + "%' ";
             }
@@ -217,7 +201,7 @@ public class BoardDAO {
         try {
             conn = getConnection();
             pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, startNum);
+            pstmt.setInt(1, startNum);      // 바인딩처리 꼭
             pstmt.setInt(2, amount);
             rs = pstmt.executeQuery();
 
@@ -229,9 +213,10 @@ public class BoardDAO {
                 board.setContent(rs.getString("content"));
                 board.setWriter(rs.getString("writer"));
                 board.setHit(rs.getInt("hit"));
-//                board.setFileName(rs.getString("file_name"));
-                board.setCreatedAt(rs.getTimestamp("createdAt"));
-                board.setUpdatedAt(rs.getTimestamp("updatedAt"));
+                board.setFileYn(rs.getBoolean("file_yn"));
+                board.setFileUUID(rs.getString("file_uuid"));
+                board.setCreatedAt(rs.getTimestamp("created_at"));
+                board.setUpdatedAt(rs.getTimestamp("updated_at"));
 
                 list.add(board);
                 System.out.println("getList list: " + list);
@@ -272,9 +257,10 @@ public class BoardDAO {
                 board.setContent(rs.getString("content"));
                 board.setWriter(rs.getString("writer"));
                 board.setHit(rs.getInt("hit"));
-                board.setFileId(rs.getLong("file_id"));
-                board.setCreatedAt(rs.getTimestamp("createdAt"));
-                board.setUpdatedAt(rs.getTimestamp("updatedAt"));
+                board.setFileYn(rs.getBoolean("file_yn"));
+                board.setFileUUID(rs.getString("file_uuid"));
+                board.setCreatedAt(rs.getTimestamp("created_at"));
+                board.setUpdatedAt(rs.getTimestamp("updated_at"));
                 return board;
             } else {
                 throw new NoSuchElementException("Board not found board=" + board);
@@ -317,6 +303,7 @@ public class BoardDAO {
         } finally {
             close(conn, pstmt, rs);
         }
+        return password;
     }
 
     /**
@@ -325,7 +312,7 @@ public class BoardDAO {
      * @throws SQLException
      */
     public List<String> getCategory() throws SQLException {
-        String query = "SELECT category FROM board GROUP BY category ORDER BY category";
+        String query = "SELECT name FROM category GROUP BY name ORDER BY name";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -334,12 +321,11 @@ public class BoardDAO {
         String category = "";
         List<String> list = new ArrayList<>();
         try {
-
             conn = getConnection();
             pstmt = conn.prepareStatement(query);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                category = rs.getString("category");
+                category = rs.getString("name");
                 list.add(category);
             }
         } catch (SQLException e) {
@@ -395,33 +381,6 @@ public class BoardDAO {
             pstmt = conn.prepareStatement(query);
             pstmt.setLong(1, id);
             return pstmt.executeUpdate();
-        } catch (SQLException e) {
-            log.error("db error", e);
-            throw e;
-        } finally {
-            close(conn, pstmt, null);
-        }
-    }
-
-    public int fileUpload(FileItem file) throws SQLException {
-        String query = "INSERT INTO File";
-        query += " (board_id, file_name, origin_name, createdAt)";
-        query += " VALUES(?,?,?,?)";
-
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-
-        try {
-            conn = getConnection();
-            pstmt = conn.prepareStatement(query);
-            pstmt.setLong(1, file.getBoardId());
-            pstmt.setString(2, file.getFileName());
-            pstmt.setString(3, file.getOriginName());
-            pstmt.setTimestamp(4, getTimeStamp());
-
-            int resultCnt = pstmt.executeUpdate();
-            System.out.println("fileUpload resultCnt: "+resultCnt);
-            return resultCnt;
         } catch (SQLException e) {
             log.error("db error", e);
             throw e;

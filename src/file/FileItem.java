@@ -12,11 +12,11 @@ import java.sql.Timestamp;
 public class FileItem {
 
     private Long id;
-    private Long boardId;
+    private String path;
+    private String fileUUIDName;
     private String fileName;
-    private String originName;
+    private Long size;
+    private Long boardId;
     private Timestamp createdAt;
-
-
 
 }

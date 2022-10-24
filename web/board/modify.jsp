@@ -14,6 +14,9 @@
 <%@ page import="board.BoardDAO"%>
 <%@ page import="java.sql.SQLException" %>
 <%@ page import="common.PageDTO" %>
+<%@ page import="reply.Reply" %>
+<%@ page import="reply.ReplyDAO" %>
+<%@ page import="java.util.List" %>
 <html>
 <head>
     <title>게시글 수정</title>
@@ -48,6 +51,7 @@
     long id = 0L;
     if (request.getParameter("id") != null) {
         id = Long.parseLong(request.getParameter("id"));
+        System.out.println("boardId: "+ id);
     }
     if (id == 0L) {
         PrintWriter script = response.getWriter();
@@ -122,10 +126,9 @@
                     <td style="width: 20%; background-color: #eeeeee;">파일 첨부</td>
                     <td colspan="2">
                     <c:choose>
-                        <%--TODO: 파일 fileId 수정 처리--%>
-                        <c:when test="${board.fileId ne null}">
-                            <a href="downloadAction.jsp?fileId=<%=java.net.URLEncoder.encode(String.format("fileId: %s", board.getFileId()), "UTF-8")%>">${board.fileId}</a> <br>
-                            </c:when>
+                        <c:when test="${board.fileUUID ne null}">
+<%--                            <a href="downloadAction.jsp?fileYn=<%=java.net.URLEncoder.encode(String.format("fileId: %s", board.getFileId()), "UTF-8")%>">${board.fileId}</a> <br>--%>
+                        </c:when>
                         <c:otherwise>
                             <span>&nbsp;</span><br>
                         </c:otherwise>

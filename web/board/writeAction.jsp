@@ -65,7 +65,7 @@
         writer = multi.getParameter("writer");
 
         // board write
-        // TODO: Board, FileItem 테이블 연관관계 매핑 처리
+        // Board, FileItem 테이블 연관관계 매핑 처리, uuid로 매핑
         Board board = new Board();
         board.setCategory(category);
         board.setPassword(password);
