@@ -17,6 +17,9 @@
 <%@ page import="reply.Reply" %>
 <%@ page import="reply.ReplyDAO" %>
 <%@ page import="java.util.List" %>
+<%@ page import="file.FileItemDAO" %>
+<%@ page import="file.FileItem" %>
+<%@ page import="java.util.ArrayList" %>
 <html>
 <head>
     <title>게시글 수정</title>
@@ -66,12 +69,23 @@
     } catch (SQLException e) {
         throw new RuntimeException(e);
     }
+
+    FileItemDAO fileItemDAO = new FileItemDAO();
+    FileItem fileItem = new FileItem();
+
+    List<FileItem> fileItemList = new ArrayList<>();
+    try {
+        fileItemList = fileItemDAO.getUUIDName(board.getFileUUID());
+        System.out.println("fileItemList: "+ fileItemList);
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
 %>
 <c:set var="board" value="<%=board%>"/>
 
 <div class="container">
     <div class="row">
-        <form action="modifyAction.jsp?id=<%=id%>&pageNum=<%=pageNum%>&amount=<%=amount%>" method="post">
+        <form role="form" action="modifyAction.jsp?id=<%=id%>&pageNum=<%=pageNum%>&amount=<%=amount%>" method="post">
             <table class="table table-striped"
                    style="text-align: center; border: 1px solid #dddddd;">
                 <tr>
@@ -131,24 +145,74 @@
                 </tr>
                 <tr>
                     <td style="width: 20%; background-color: #eeeeee;">파일 첨부</td>
+                    <c:forEach var="fileItem" items="<%=fileItemList%>">
                     <td colspan="2">
-                    <c:choose>
-                        <c:when test="${board.fileUUID ne null}">
-<%--                            <a href="downloadAction.jsp?fileYn=<%=java.net.URLEncoder.encode(String.format("fileId: %s", board.getFileId()), "UTF-8")%>">${board.fileId}</a> <br>--%>
-                        </c:when>
-                        <c:otherwise>
-                            <span>&nbsp;</span><br>
-                        </c:otherwise>
-                    </c:choose>
-                        <input type="file" name="upload" value="" class="board_view_input" />
+                        <c:choose>
+                            <c:when test="${board.fileUUID ne null}">
+                                <div class="uploadResult">
+                                    <ul>
+                                        <a href="downloadAction.jsp?fileUUIDName=${fileItem.fileUUIDName}">${fileItem.fileName}</a>
+                                        <button type="button" id="delete_fileItem">삭제</button>
+                                    </ul>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <span>&nbsp;</span><br>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                        <div><input type="file" name="upload" value="" class="file_modify_input" /></div>
                     </td>
                 </tr>
             </table>
             <input type="button" class="btn btn-primary" onclick="location.href='list.jsp?pageNum=<%=pageNum%>&amount=<%=amount%>'" value="취소">
-            <input type="submit" class="btn btn-primary pull-left" value="저장">
+            <button type="submit" data-oper='modify' class="btn btn-primary pull-left">수정</button>
+<%--         TODO: modifyAction.jsp에 보내기 위해 hidden으로 delete oper 정보 보내야돼! --%>
         </form>
 
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+
+        var formObj = $("form");
+
+        $('button').on("click", function (e) {
+            e.preventDefault();
+            var operation = $(this).data("oper");
+            console.log("operation: ", operation);
+
+            if (operation === 'modify') {
+                console.log("modify clicked");
+
+                var str = "";
+
+                $(".uploadResult ul").each(function (i, obj) {
+                    var jobj = $(obj);
+
+                    console.dir(jobj);
+                    // TODO: 파일 나온 부분을 가져와서 jquery 태그로 자겨와서 modifyAction.jsp로 보내기
+                    // str += "<input type='hidden' name='fileItem["+i+"].fileName' value='"+jobj.data("filename")+"'>";
+                });
+
+            }
+
+        });
+        // TODO : modify시 파일 change -> 파일이 나오게 처리
+        $('.file_modify_input').change('')
+
+        // 파일 a태그 삭제
+        $('.uploadResult').on('click', 'button', function (e) {
+            // e.preventDefault();
+            console.log('delete_fileItem click');
+            if (confirm("파일을 삭제하시겠습니까?")) {
+                var targetLi = $(this).closest("div");
+                targetLi.remove();
+            }
+
+        });
+    });
+</script>
 </body>
 </html>

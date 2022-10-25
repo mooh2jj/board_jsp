@@ -79,14 +79,14 @@
     } else {
 
         if(password.equals(dbPassword)){
-            script.println("<script>");
-            script.println("alert('패스워드가 일치 합니다. <br> 수정되었습니다.')");
-            script.println("</script>");
             try {
                 result = boardDAO.update(board);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+            script.println("<script>");
+            script.println("location.href='list.jsp';");
+            script.println("</script>");
         } else {
             script.println("<script>");
             script.println("alert('패스워드가 맞지 않습니다.')");

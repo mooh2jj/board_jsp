@@ -1,6 +1,5 @@
 package board;
 
-import file.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -344,19 +343,22 @@ public class BoardDAO {
      * @throws SQLException
      */
     public int update(Board board) throws SQLException {
-        String query = "UPDATE Board SET title=?, content=?, writer=?, updatedAt=?  WHERE id=?";
+        String query = "UPDATE Board SET title=?, content=?, writer=?, updated_at=?  WHERE id=?";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
             conn = getConnection();
             pstmt = conn.prepareStatement(query);
+
             pstmt.setString(1, board.getTitle());
             pstmt.setString(2, board.getContent());
             pstmt.setString(3, board.getWriter());
             pstmt.setTimestamp(4, getTimeStamp());
             pstmt.setLong(5, board.getId());
+
             return pstmt.executeUpdate();
+
         } catch (SQLException e) {
             log.error("db error", e);
             throw e;
