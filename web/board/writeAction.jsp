@@ -48,10 +48,17 @@
     FileItemDAO fileItemDAO = new FileItemDAO();
 
     int result = 0;
+    String UPLOAD_DIRECTORY = "upload";
 
     try {
         // file 업로드 TODO: os에 따라 경로 설정, 다중 업로드 FileItem 저장, 연관관계 매핑 설정하기
-        String uploadPath = "C:\\WebStudy\\WebDevelement\\JSP\\board_jsp\\upload";
+
+        String uploadPath = System.getProperty("user.dir") // user.dir == C:\WebStudy\WebDevelement\JSP\board_jsp
+                + File.separator
+                + UPLOAD_DIRECTORY;
+        System.out.println("uploadPath: "+uploadPath);
+        // String uploadPath = "C:\\WebStudy\\WebDevelement\\JSP\\board_jsp\\upload";
+
         int maxFileSize = 1024 * 1024 * 100;
         String encType = "utf-8";
 
