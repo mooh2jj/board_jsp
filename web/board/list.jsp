@@ -114,7 +114,7 @@ isELIgnored="false"
                             <td>&nbsp;</td>
                         </c:otherwise>
                     </c:choose>
-                    <td style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width: 500px"><a href="view.jsp?id=${board.id}&pageNum=<%=pageNum%>">${board.title}</a></td>
+                    <td style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width: 500px"><a class="move" href="${board.id}"> ${board.title}</a></td>
                     <td>${board.writer}</td>
                     <td>${board.hit}</td>
                     <td><fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="${board.createdAt}"/></td>
@@ -202,6 +202,16 @@ isELIgnored="false"
             searchForm.find("input[name='pageNum']").val("1");      // 검색버튼을 클릭하면 검색은 1페이지로 이동
             e.preventDefault();
             searchForm.submit();
+
+        });
+
+        $(".move").on("click", function(e) {
+                e.preventDefault();
+                actionForm.append("<input type='hidden' name='id' value='"
+                        + $(this).attr("href")
+                        + "'>");
+                actionForm.attr("action", "view.jsp");
+                actionForm.submit();
 
         });
     });

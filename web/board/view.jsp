@@ -32,6 +32,14 @@
         id = Long.parseLong(request.getParameter("id"));
         replyText = request.getParameter("replyText");
     }
+
+    String keyword = "";
+    String searchOption = "";
+    if (request.getParameter("keyword") != null || request.getParameter("searchOption") != null) {
+        keyword = request.getParameter("keyword");
+        searchOption = request.getParameter("searchOption");
+    }
+
     PrintWriter script = response.getWriter();
     if (id == 0) {
         script.println("<script>");
@@ -110,6 +118,11 @@
 <c:set var="board" value="<%=board%>"/>
 <c:set var="reply" value="<%=reply%>"/>
 <c:set var="replyList" value="<%=replyList%>"/>
+<c:set var="pageNum" value="<%=pageNum%>" />
+<c:set var="amount" value="<%=amount%>" />
+<c:set var="keyword" value="<%=keyword%>" />
+<c:set var="searchOption" value="<%=searchOption%>" />
+
 ${board.writer}
 <br>
 등록일시 <fmt:formatDate pattern="yyyy.MM.dd HH:mm:ss" value="${board.createdAt}"/>
@@ -161,9 +174,17 @@ ${board.writer}
             </tr>
         </table>
         <br>
-        <a href="list.jsp?pageNum=<%=pageNum%>&amount=<%=amount%>" class="btn btn-primary">목록</a>
-        <a href="modify.jsp?id=${board.id}&pageNum=<%=pageNum%>" class="btn btn-primary">수정</a>
+        <button data-oper='list' class="btn btn-info">목록</button>
+        <button data-oper='modify' class="btn btn-default">수정</button>
         <a onclick="return confirm('정말로 삭제하시겠습니까?')" href="deleteAction.jsp?id=${board.id}" class="btn btn-primary">삭제</a>
+
+        <form id='operForm' action="modify.jsp" method="get">
+            <input type='hidden' id='id' name='id' value='<c:out value="${board.id}"/>'>
+            <input type='hidden' name='pageNum' value='<c:out value="${pageNum}"/>'>
+            <input type='hidden' name='amount' value='<c:out value="${amount}"/>'>
+            <input type='hidden' name='keyword' value='<c:out value="${keyword}"/>'>
+            <input type='hidden' name='searchOption' value='<c:out value="${searchOption}"/>'>
+        </form>
 
     </div>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
@@ -242,6 +263,22 @@ ${board.writer}
             return strDate;
         }
 
+    });
+</script>
+<script>
+    $(document).ready(function() {
+
+        var operForm = $("#operForm");
+
+        $("button[data-oper='modify']").on("click", function(e){
+            operForm.attr("action","modify.jsp").submit();
+        });
+
+        $("button[data-oper='list']").on("click", function(e){
+            operForm.find("#id").remove();
+            operForm.attr("action","list.jsp")
+            operForm.submit();
+        });
     });
 </script>
 </div>
