@@ -60,9 +60,19 @@
         PrintWriter script = response.getWriter();
         script.println("<script>");
         script.println("alert('유효하지 않은 글입니다.')");
-        script.println("location.href='board.jsp'");
+        script.println("location.href='list.jsp'");
         script.println("</script>");
     }
+
+    String keyword = "";
+    String searchOption = "";
+    if (request.getParameter("keyword") != null || request.getParameter("searchOption") != null) {
+        keyword = request.getParameter("keyword");
+        searchOption = request.getParameter("searchOption");
+    }
+    System.out.println("keyword: " + keyword);
+    System.out.println("searchOption: " + searchOption);
+
     Board board = null;
     try {
         board = new BoardDAO().getBoard(id);
@@ -82,10 +92,19 @@
     }
 %>
 <c:set var="board" value="<%=board%>"/>
-
+<c:set var="pageNum" value="<%=pageNum%>" />
+<c:set var="amount" value="<%=amount%>" />
+<c:set var="keyword" value="<%=keyword%>" />
+<c:set var="searchOption" value="<%=searchOption%>" />
 <div class="container">
     <div class="row">
         <form role="form" action="modifyAction.jsp?id=<%=id%>&pageNum=<%=pageNum%>&amount=<%=amount%>" method="post">
+            <%-- 검색유지를 위해 받을 필드값을 이렇게 받음  --%>
+            <input type='hidden' name='pageNum' value='<c:out value="${pageNum}"/>'>
+            <input type='hidden' name='amount' value='<c:out value="${amount}"/>'>
+            <input type='hidden' name='keyword' value='<c:out value="${keyword}"/>'>
+            <input type='hidden' name='searchOption' value='<c:out value="${searchOption}"/>'>
+
             <table class="table table-striped"
                    style="text-align: center; border: 1px solid #dddddd;">
                 <tr>
@@ -165,9 +184,9 @@
                     </td>
                 </tr>
             </table>
-            <input type="button" class="btn btn-primary" onclick="location.href='list.jsp?pageNum=<%=pageNum%>&amount=<%=amount%>'" value="취소">
+            <button type="submit" data-oper='list' class="btn btn-info">취소</button>
             <button type="submit" data-oper='modify' class="btn btn-primary pull-left">수정</button>
-<%--         TODO: modifyAction.jsp에 보내기 위해 hidden으로 delete oper 정보 보내야돼! --%>
+<%--         TODO: modifyAction.jsp에 보내기 위해 hidden으로 file delete oper 정보 보내야돼! --%>
         </form>
 
     </div>
@@ -183,6 +202,28 @@
             var operation = $(this).data("oper");
             console.log("operation: ", operation);
 
+            if(operation === 'list'){
+                //move to list
+                formObj.attr("action", "list.jsp").attr("method","get");
+
+                var pageNumTag = $("input[name='pageNum']").clone();
+                var amountTag = $("input[name='amount']").clone();
+                var keywordTag = $("input[name='keyword']").clone();
+                var searchOption = $("input[name='searchOption']").clone();
+
+                console.log("pageNumTag: ", pageNumTag);
+                console.log("amountTag: ", amountTag);
+                console.log("keywordTag: ", keywordTag);
+                console.log("searchOption: ", searchOption);
+
+                formObj.empty();        // pageNum, amount, keyword, searchOption 외에는 가져오지 않기 위해
+
+                formObj.append(pageNumTag);
+                formObj.append(amountTag);
+                formObj.append(keywordTag);
+                formObj.append(searchOption);
+            }
+
             if (operation === 'modify') {
                 console.log("modify clicked");
 
@@ -197,6 +238,8 @@
                 });
 
             }
+
+            formObj.submit();
 
         });
         // TODO : modify시 파일 change -> 파일이 나오게 처리
@@ -214,5 +257,6 @@
         });
     });
 </script>
+
 </body>
 </html>
