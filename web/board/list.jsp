@@ -68,7 +68,6 @@ isELIgnored="false"
             margin-left : 5px;
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 </head>
 <body>
 <h2>게시판 - 목록</h2>
@@ -76,6 +75,7 @@ isELIgnored="false"
 
     <form align="left" id="searchForm" method="get" action="list.jsp">
         <select name="searchOption">
+            <option value="" <c:out value="${searchOption == null?'selected':''}"/>>--</option>
             <option value="all" <c:out value="${searchOption eq 'all'?'selected':''}"/>>제목+작성자+내용</option>
             <option value="title" <c:out value="${searchOption eq 'title'?'selected':''}"/>>제목</option>
             <option value="writer" <c:out value="${searchOption eq 'writer'?'selected':''}"/>>작성자</option>
@@ -84,7 +84,7 @@ isELIgnored="false"
         <input type="text" name="keyword" style="width: 290px;" placeholder="검색어를 입력해주세요. (제목+작성자+내용)">
         <input type='hidden' name='pageNum' value='<c:out value="${pageNum}"/>' />
         <input type='hidden' name='amount' value='<c:out value="${amount}"/>' />
-        <input type="submit" value="검색"/>
+        <button class='btn btn-default'>검색</button>
     </form>
 
     <br>
@@ -141,36 +141,27 @@ isELIgnored="false"
             <div>
                 <ul class="pagination">
                     <c:if test="<%=prev%>">
-                        <li class="pagination_button prev">
-                            <a href="list.jsp?pageNum=<%=1%>&amount=<%=amount%>">&lt;&lt;</a>
-                            <a href="list.jsp?pageNum=<%=startPage - 1 %>&amount=<%=amount%>">&lt;</a>
+                        <li class="paginate_button prev">
+                            <a href="<%=1%>">&lt;&lt;</a>
+                            <a href="<%=startPage - 1 %>">&lt;</a>
                         </li>
                     </c:if>
 
                     <c:forEach var="num" begin="<%=startPage%>" end="<%=endPage%>">
-                        <c:choose>
-                            <c:when test="${ num == pageNum }">
-                                <li class="pagination_button">
-                                <a>${num}</a>
-                                </li>
-                            </c:when>
-                            <c:when test="${ num != pageNum }">
-                                <li class="pagination_button next">
-                                    <a href="list.jsp?pageNum=${num}&amount=<%=amount%>">${num}</a>
-                                </li>
-                            </c:when>
-                        </c:choose>
+                        <li class="paginate_button  ${pageNum == num ? "active":""} ">
+                            <a href="${num}">${num}</a>
+                        </li>
                     </c:forEach>
 
                     <c:if test="<%=next%>">
-                        <li class="pagination_button">
-                            <a href="list.jsp?pageNum=<%=endPage + 1%>&amount=<%=amount%>">&gt;</a>
-                            <a href="list.jsp?pageNum=<%=realEnd%>&amount=<%=amount%>">&gt;&gt;</a>
+                        <li class="paginate_button next">
+                            <a href="<%=endPage + 1%>">&gt;</a>
+                            <a href="<%=realEnd%>">&gt;&gt;</a>
                         </li>
                     </c:if>
                 </ul>
             </div>
-            <%-- TODO: 검색시, 페이징이동해도 검색유지 처리  --%>
+            <%-- 검색시, 페이징이동해도 검색유지 처리 해결 --%>
             <form id='actionForm' action="list.jsp" method='get'>
                 <input type='hidden' name='pageNum' value='${pageNum}'>
                 <input type='hidden' name='amount' value='${amount}'>
@@ -181,30 +172,11 @@ isELIgnored="false"
             <a href="write.jsp?pageNum=${pageNum}" class="btn btn-primary pull-right">등록</a>
         </div>
     </div>
-
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script>
     $(document).ready(function () {
 
-        var searchForm = $("#searchForm");
-
-        $("#searchForm button").on("click", function(e) {
-
-                if (!searchForm.find("option:selected").val()) {
-                    alert("검색종류를 선택하세요");
-                    return false;
-                }
-
-                if (!searchForm.find("input[name='keyword']").val()) {
-                    alert("키워드를 입력하세요");
-                    return false;
-                }
-
-                searchForm.find("input[name='pageNum']").val("1");
-                e.preventDefault();
-                searchForm.submit();
-
-            });
-
+        // 페이지 번호 클릭시 actionForm form 태그를 타서 hidden으로  pageNum, amount, searchOption, keyword를 보내게 처리
         var actionForm = $("#actionForm");
 
         $(".paginate_button a").on("click", function(e) {
@@ -214,6 +186,24 @@ isELIgnored="false"
                 actionForm.find("input[name='pageNum']").val($(this).attr("href"));
                 actionForm.submit();
             });
+
+        var searchForm = $("#searchForm");
+
+        $("#searchForm button").on("click", function(e) {
+
+            if (!searchForm.find("option:selected").val()) {
+                alert("검색종류를 선택하세요");
+                return false;
+            }
+            if (!searchForm.find("input[name='keyword']").val()) {
+                alert("키워드를 입력하세요");
+                return false;
+            }
+            searchForm.find("input[name='pageNum']").val("1");      // 검색버튼을 클릭하면 검색은 1페이지로 이동
+            e.preventDefault();
+            searchForm.submit();
+
+        });
     });
 </script>
 </body>
