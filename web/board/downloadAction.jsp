@@ -32,8 +32,13 @@
     OutputStream os = null;
     boolean skip = false;
     File file = null;
+    String UPLOAD_DIRECTORY = "upload";
 
-    String uploadPath = "C:\\WebStudy\\WebDevelement\\JSP\\board_jsp\\upload";
+
+    String uploadPath = System.getProperty("user.dir") // user.dir == C:\WebStudy\WebDevelement\JSP\board_jsp
+            + File.separator    // 윈도우 : '\' 리눅스 : '/'
+            + UPLOAD_DIRECTORY;
+    System.out.println("uploadPath: "+uploadPath);
 
     try {
         String fileUUIDName = request.getParameter("fileUUIDName");
