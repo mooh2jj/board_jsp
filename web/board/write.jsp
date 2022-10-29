@@ -14,12 +14,6 @@
 </head>
 <body>
 <%
-    request.setCharacterEncoding("UTF-8");
-    long id = 0L;
-    if (request.getParameter("id") != null || "".equals(request.getParameter("id"))) {
-        id = Long.parseLong(request.getParameter("id"));
-    }
-
     // 페이지 처리 pageNum, amount
     int pageNum = 0;
     int amount = 10;    // 한 페이지에 보여줄 글의 갯수
@@ -46,16 +40,9 @@
     }
 
     BoardDAO boardDAO = null;
-    Board board = null;
-    try {
-        board = boardDAO.getBoard(id);
-    } catch (SQLException e) {
-        throw new RuntimeException(e);
-    }
 %>
 
 <h2>게시판 - 등록</h2>
-<c:set var="board" value="<%=board%>"/>
 <c:set var="pageNum" value="<%=pageNum%>" />
 <c:set var="amount" value="<%=amount%>" />
 <c:set var="keyword" value="<%=keyword%>" />
@@ -113,7 +100,6 @@
                     <td><input type="file" name="file3" value="" class="board_view_input" /></td>
                 </tr>
             </table>
-            <input type='hidden' id='id' name='id' value='<c:out value="${board.id}"/>'>
             <input type='hidden' name='pageNum' value='<c:out value="${pageNum}"/>'>
             <input type='hidden' name='amount' value='<c:out value="${amount}"/>'>
             <input type='hidden' name='keyword' value='<c:out value="${keyword}"/>'>
