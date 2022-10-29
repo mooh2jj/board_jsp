@@ -44,7 +44,7 @@
     if (id == 0) {
         script.println("<script>");
         script.println("alert('유효하지 않은 글입니다.')");
-        script.println("location.href='board.jsp'");
+        script.println("location.href='jsp.jsp'");
         script.println("</script>");
     }
     BoardDAO boardDAO = new BoardDAO();
@@ -133,6 +133,13 @@ ${board.writer}
 
 <div class="container">
     <div class="row">
+        <form id='form' action="modify.jsp" method="post">
+            <input type='hidden' id='id' name='id' value='<c:out value="${board.id}"/>'>
+            <input type='hidden' name='pageNum' value='<c:out value="${pageNum}"/>'>
+            <input type='hidden' name='amount' value='<c:out value="${amount}"/>'>
+            <input type='hidden' name='keyword' value='<c:out value="${keyword}"/>'>
+            <input type='hidden' name='searchOption' value='<c:out value="${searchOption}"/>'>
+
         <table class="table table-striped">
             <tr>
                 <td style="min-height: 200px; text-align: left;">
@@ -176,16 +183,9 @@ ${board.writer}
         <br>
         <button data-oper='list' class="btn btn-info">목록</button>
         <button data-oper='modify' class="btn btn-default">수정</button>
-        <a onclick="return confirm('정말로 삭제하시겠습니까?')" href="deleteAction.jsp?id=${board.id}" class="btn btn-primary">삭제</a>
-
-        <form id='operForm' action="modify.jsp" method="get">
-            <input type='hidden' id='id' name='id' value='<c:out value="${board.id}"/>'>
-            <input type='hidden' name='pageNum' value='<c:out value="${pageNum}"/>'>
-            <input type='hidden' name='amount' value='<c:out value="${amount}"/>'>
-            <input type='hidden' name='keyword' value='<c:out value="${keyword}"/>'>
-            <input type='hidden' name='searchOption' value='<c:out value="${searchOption}"/>'>
+<%--        <a onclick="return confirm('정말로 삭제하시겠습니까?')" href="deleteAction.jsp?id=${board.id}" class="btn btn-primary">삭제</a>--%>
+        <button data-oper="remove" class="btn btn-danger">삭제</button>
         </form>
-
     </div>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script>
@@ -250,34 +250,38 @@ ${board.writer}
                 }
             });
         }
-        function changeDate(date){
-            date = new Date(parseInt(date));
-            year = date.getFullYear();
-            month = date.getMonth();
-            day = date.getDate();
-            hour = date.getHours();
-            minute = date.getMinutes();
-            second = date.getSeconds();
-            strDate = year+"-"+month+"-"+day+"-"+hour+"-"+minute+":"+second;
-
-            return strDate;
-        }
 
     });
 </script>
 <script>
     $(document).ready(function() {
+        var formObj = $("#form");
 
-        var operForm = $("#operForm");
+        $('button').on("click", function(e) {
+            e.preventDefault();
 
-        $("button[data-oper='modify']").on("click", function(e){
-            operForm.attr("action","modify.jsp").submit();
-        });
+            var operation = $(this).data("oper");
+            console.log(operation);
 
-        $("button[data-oper='list']").on("click", function(e){
-            operForm.find("#id").remove();
-            operForm.attr("action","list.jsp")
-            operForm.submit();
+            if(operation === 'remove') {
+                alert('정말로 삭제하시겠습니까?');
+                formObj.attr("action", "deleteAction.jsp");
+            }
+            else if (operation === 'list') {
+                formObj.attr("action", "list.jsp").attr("method","get");
+                var pageNumTag = $("input[name='pageNum']").clone();
+                var amountTag = $("input[name='amount']").clone();
+                var keywordTag = $("input[name='keyword']").clone();
+                var searchOption = $("input[name='searchOption']").clone();
+
+                formObj.empty();
+
+                formObj.append(pageNumTag);
+                formObj.append(amountTag);
+                formObj.append(keywordTag);
+                formObj.append(searchOption);
+            }
+            formObj.submit();
         });
     });
 </script>
