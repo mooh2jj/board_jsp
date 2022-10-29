@@ -1,4 +1,6 @@
 <%@ page import="board.BoardDAO" %>
+<%@ page import="board.Board" %>
+<%@ page import="java.sql.SQLException" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!doctype html>
@@ -12,30 +14,58 @@
 </head>
 <body>
 <%
+    request.setCharacterEncoding("UTF-8");
+    long id = 0L;
+    if (request.getParameter("id") != null || "".equals(request.getParameter("id"))) {
+        id = Long.parseLong(request.getParameter("id"));
+    }
+
     // 페이지 처리 pageNum, amount
     int pageNum = 0;
     int amount = 10;    // 한 페이지에 보여줄 글의 갯수
 
-    String pageNumStr = request.getParameter("pageNum");
+    // TODO: StringUtils. 라이브러리 사용
+    String pageNumStr = "";
+    if (request.getParameter("pageNum") != null || "".equals(request.getParameter("pageNum"))) {
+        pageNumStr = request.getParameter("pageNum");
+    }
     System.out.println("pageNumStr: "+ pageNumStr);
 
-    if (pageNumStr == null) {
+    if (pageNumStr == "") {
         pageNum = 1;
     } else{
         pageNum = Integer.parseInt(pageNumStr);
         System.out.println("======pageNum: "+ pageNum);
     }
 
+    String keyword = "";
+    String searchOption = "";
+    if (request.getParameter("keyword") != null || request.getParameter("searchOption") != null) {
+        keyword = request.getParameter("keyword");
+        searchOption = request.getParameter("searchOption");
+    }
+
     BoardDAO boardDAO = null;
+    Board board = null;
+    try {
+        board = boardDAO.getBoard(id);
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
 %>
 
 <h2>게시판 - 등록</h2>
+<c:set var="board" value="<%=board%>"/>
+<c:set var="pageNum" value="<%=pageNum%>" />
+<c:set var="amount" value="<%=amount%>" />
+<c:set var="keyword" value="<%=keyword%>" />
+<c:set var="searchOption" value="<%=searchOption%>" />
 
 <br>
 <br>
 <div class="container">
     <div class="row">
-        <form action="writeAction.jsp" method="post" enctype="multipart/form-data">
+        <form id="form" action="writeAction.jsp" method="post" enctype="multipart/form-data">
             <table class="table table-striped"
                    style="text-align: center; border: 1px solid #dddddd;">
                 <tr>
@@ -83,8 +113,16 @@
                     <td><input type="file" name="file3" value="" class="board_view_input" /></td>
                 </tr>
             </table>
-            <input type="button" class="btn btn-primary" onclick="location.href='list.jsp?pageNum=<%=pageNum%>&amount=<%=amount%>'" value="취소">
-            <input type="submit" class="btn btn-primary pull-right" value="저장">
+            <input type='hidden' id='id' name='id' value='<c:out value="${board.id}"/>'>
+            <input type='hidden' name='pageNum' value='<c:out value="${pageNum}"/>'>
+            <input type='hidden' name='amount' value='<c:out value="${amount}"/>'>
+            <input type='hidden' name='keyword' value='<c:out value="${keyword}"/>'>
+            <input type='hidden' name='searchOption' value='<c:out value="${searchOption}"/>'>
+
+<%--            <input type="button" class="btn btn-primary" onclick="location.href='list.jsp?pageNum=<%=pageNum%>&amount=<%=amount%>'" value="취소">--%>
+            <button data-oper='list' class="btn btn-info">목록</button>
+<%--            <input type="submit" class="btn btn-primary pull-right" value="저장">--%>
+            <button data-oper='write' class="btn btn-default">저장</button>
         </form>
     </div>
 </div>
@@ -110,6 +148,35 @@
                     $("#alert-danger").css('display', 'inline-block');
                 }
             }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        var formObj = $("#form");
+
+        $('button').on("click", function(e) {
+            e.preventDefault();
+
+            var operation = $(this).data("oper");
+            console.log(operation);
+
+            if (operation === 'list') {
+                formObj.attr("action", "list.jsp").attr("method","get");
+                var pageNumTag = $("input[name='pageNum']").clone();
+                var amountTag = $("input[name='amount']").clone();
+                var keywordTag = $("input[name='keyword']").clone();
+                var searchOption = $("input[name='searchOption']").clone();
+
+                formObj.empty();
+
+                formObj.append(pageNumTag);
+                formObj.append(amountTag);
+                formObj.append(keywordTag);
+                formObj.append(searchOption);
+            }
+            // 나머지는 그냥 submit
+            formObj.submit();
         });
     });
 </script>

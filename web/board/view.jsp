@@ -133,7 +133,7 @@ ${board.writer}
 
 <div class="container">
     <div class="row">
-        <form id='form' action="modify.jsp" method="post">
+        <form id='form' action="modify.jsp" method="get">
             <input type='hidden' id='id' name='id' value='<c:out value="${board.id}"/>'>
             <input type='hidden' name='pageNum' value='<c:out value="${pageNum}"/>'>
             <input type='hidden' name='amount' value='<c:out value="${amount}"/>'>

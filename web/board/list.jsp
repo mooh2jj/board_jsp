@@ -11,6 +11,7 @@ isELIgnored="false"
 
 <%
     request.setCharacterEncoding("UTF-8");
+    // TODO: StringUtils. 라이브러리 사용
     String searchOption = request.getParameter("searchOption");
     String keyword = request.getParameter("keyword");
     BoardDAO boardDAO = new BoardDAO();
@@ -169,12 +170,24 @@ isELIgnored="false"
                 <input type='hidden' name='keyword' value='<c:out value="${keyword}"/>'>
             </form>
 
-            <a href="write.jsp?pageNum=${pageNum}" class="btn btn-primary pull-right">등록</a>
+<%--            <a href="write.jsp?pageNum=${pageNum}" class="btn btn-primary pull-right">등록</a>--%>
+            <button id="regBtn" type="button" class="btn btn-xs pull-right">등록</button>
         </div>
     </div>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script>
     $(document).ready(function () {
+
+        $("#regBtn").on("click", function(e) {
+
+            e.preventDefault();
+            actionForm.append("<input type='hidden' name='id' value='"
+                + $(this).attr("href")
+                + "'>");
+            actionForm.attr("action", "write.jsp");
+            actionForm.submit();
+
+        });
 
         // 페이지 번호 클릭시 actionForm form 태그를 타서 hidden으로  pageNum, amount, searchOption, keyword를 보내게 처리
         var actionForm = $("#actionForm");
