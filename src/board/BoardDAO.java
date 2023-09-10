@@ -165,6 +165,36 @@ public class BoardDAO {
     }
 
     /**
+     * board insert 마지막 최근 boardId 반환
+     * @return boardId
+     * @throws SQLException
+     */
+    public long getLastInsertId() throws SQLException {
+        long result = 0;
+        String query = "SELECT LAST_INSERT_ID()";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt(1);
+                return result;
+            } else {
+                throw new RuntimeException("getLastInsertId not function");
+            }
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+
+    /**
      * 게시판 글 목록
      * @param searchOption
      * @param keyword
@@ -213,7 +243,6 @@ public class BoardDAO {
                 board.setWriter(rs.getString("writer"));
                 board.setHit(rs.getInt("hit"));
                 board.setFileYn(rs.getBoolean("file_yn"));
-                board.setFileUUID(rs.getString("file_uuid"));
                 board.setCreatedAt(rs.getTimestamp("created_at"));
                 board.setUpdatedAt(rs.getTimestamp("updated_at"));
 
@@ -257,7 +286,6 @@ public class BoardDAO {
                 board.setWriter(rs.getString("writer"));
                 board.setHit(rs.getInt("hit"));
                 board.setFileYn(rs.getBoolean("file_yn"));
-                board.setFileUUID(rs.getString("file_uuid"));
                 board.setCreatedAt(rs.getTimestamp("created_at"));
                 board.setUpdatedAt(rs.getTimestamp("updated_at"));
                 return board;

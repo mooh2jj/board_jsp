@@ -37,6 +37,7 @@ isELIgnored="false"
     boolean next = pageDTO.isNext();
 
     List<Board> list = null;
+    // TODO: 비즈니스 로직에서 checked Exception 처리 안되게 정리해야!
     try {
         list = boardDAO.getList(searchOption, keyword, startNum, amount);
         System.out.println("list.jsp, list: "+ list);
@@ -67,6 +68,10 @@ isELIgnored="false"
         li {
             float: left;
             margin-left : 5px;
+        }
+
+        .clicked {
+            color: crimson;
         }
     </style>
 </head>
@@ -193,11 +198,12 @@ isELIgnored="false"
         var actionForm = $("#actionForm");
 
         $(".paginate_button a").on("click", function(e) {
-                e.preventDefault();
-                console.log('click');
+            e.preventDefault();
+            console.log('click');
+            $(this).toggleClass('clicked');     // TODO: submit으로 사라짐. 색깔 유지 방법은?
 
-                actionForm.find("input[name='pageNum']").val($(this).attr("href"));
-                actionForm.submit();
+            actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+            actionForm.submit();
             });
 
         var searchForm = $("#searchForm");

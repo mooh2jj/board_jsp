@@ -48,6 +48,7 @@
 
     int result = 0;
     String UPLOAD_DIRECTORY = "upload";
+    System.out.println("writeAction.jsp start!!");
 
     try {
         // file 업로드 TODO: os에 따라 경로 설정, 다중 업로드 FileItem 저장, 연관관계 매핑 설정하기
@@ -55,8 +56,8 @@
         String uploadPath = System.getProperty("user.dir") // user.dir == C:\WebStudy\WebDevelement\JSP\board_jsp
                 + File.separator        // 윈도우 : '\' 리눅스 : '/'
                 + UPLOAD_DIRECTORY;
-        System.out.println("uploadPath: "+uploadPath);
-        // String uploadPath = "C:\\WebStudy\\WebDevelement\\JSP\\board_jsp\\upload";
+        // TODO : 다시 tomcat 내 bin 폴더로 경로가 잡힘.. 원인 파악
+        System.out.println(" writeAction start uploadPath: "+uploadPath);
 
         int maxFileSize = 1024 * 1024 * 100;
         String encType = "utf-8";
@@ -72,6 +73,7 @@
 
         // board write
         // Board, FileItem 테이블 연관관계 매핑 처리, uuid로 매핑
+        // TODO : board Write시 board 테이블, file_item 테이블 같은 Transaction 내에 처리
         Board board = new Board();
         board.setCategory(category);
         board.setPassword(password);
@@ -79,7 +81,12 @@
         board.setContent(content);
         board.setWriter(writer);
 
-        System.out.println("board:" + board);
+        int writeResult = boardDAO.write(board);
+        System.out.println("writeResult: " + writeResult);
+
+        long lastInsertId = boardDAO.getLastInsertId();
+
+        System.out.println("board lastInsertId:" + lastInsertId);
 
         // fileItem write, 다수일때
         Enumeration files = multi.getFileNames();  // 폼의 이름 반환
@@ -108,7 +115,7 @@
                     fileItem.setFileUUIDName(uuidFileName);
                     fileItem.setFileName(originFileName);
                     fileItem.setSize(fileSize);
-                    fileItem.setBoardId(1L);
+                    fileItem.setBoardId(lastInsertId);        // lastInsertId 가져옴
 
                     fileItemDAO.fileUpload(fileItem);
                 }
@@ -124,7 +131,8 @@
             }
             board.setFileUUID(String.valueOf(uuid));
         }
-        result = boardDAO.write(board);
+//        result = boardDAO.write(board);
+        System.out.println("writeAction boardDAO result: " +result);
     } catch (Exception e) {
         e.printStackTrace();
     }
